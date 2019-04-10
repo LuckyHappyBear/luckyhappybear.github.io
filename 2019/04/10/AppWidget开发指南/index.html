@@ -68,7 +68,7 @@
 
 
 
-  <meta name="keywords" content="Hexo, NexT">
+  <meta name="keywords" content="Android开发，小部件,">
 
 
 
@@ -79,13 +79,23 @@
 
 
 
-<meta property="og:type" content="website">
-<meta property="og:title" content="大雄的博客">
-<meta property="og:url" content="http://luckyhappybear.github.io/index.html">
+<meta name="description" content="AppWidget开发指南AppWidget简介&amp;emsp;&amp;emsp;AppWidget 即桌面小部件，是能直接显示在Android系统桌面上的小程序，是android系统应用开发层面的一部分，但是又有特殊用途，而且会成为整个android系统的亮点。&amp;emsp;&amp;emsp;我们可以把它认为是app的一个微缩窗口，我们可以通过它来快速的展示一些信息，做一些简单的交互，我们通常将AppWidget">
+<meta name="keywords" content="Android开发，小部件">
+<meta property="og:type" content="article">
+<meta property="og:title" content="AppWidget开发指南">
+<meta property="og:url" content="http://luckyhappybear.github.io/2019/04/10/AppWidget开发指南/index.html">
 <meta property="og:site_name" content="大雄的博客">
+<meta property="og:description" content="AppWidget开发指南AppWidget简介&amp;emsp;&amp;emsp;AppWidget 即桌面小部件，是能直接显示在Android系统桌面上的小程序，是android系统应用开发层面的一部分，但是又有特殊用途，而且会成为整个android系统的亮点。&amp;emsp;&amp;emsp;我们可以把它认为是app的一个微缩窗口，我们可以通过它来快速的展示一些信息，做一些简单的交互，我们通常将AppWidget">
 <meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="http://luckyhappybear.github.io/2019/04/10/AppWidget开发指南/AppWidget开发指南/原生尺寸对应表.png">
+<meta property="og:image" content="http://luckyhappybear.github.io/2019/04/10/AppWidget开发指南/AppWidget开发指南/简单小部件.png">
+<meta property="og:image" content="http://luckyhappybear.github.io/2019/04/10/AppWidget开发指南/AppWidget开发指南/生命周期图.png">
+<meta property="og:image" content="http://luckyhappybear.github.io/2019/04/10/AppWidget开发指南/AppWidget开发指南/listView效果图.png">
+<meta property="og:updated_time" content="2019-04-10T14:00:32.291Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="大雄的博客">
+<meta name="twitter:title" content="AppWidget开发指南">
+<meta name="twitter:description" content="AppWidget开发指南AppWidget简介&amp;emsp;&amp;emsp;AppWidget 即桌面小部件，是能直接显示在Android系统桌面上的小程序，是android系统应用开发层面的一部分，但是又有特殊用途，而且会成为整个android系统的亮点。&amp;emsp;&amp;emsp;我们可以把它认为是app的一个微缩窗口，我们可以通过它来快速的展示一些信息，做一些简单的交互，我们通常将AppWidget">
+<meta name="twitter:image" content="http://luckyhappybear.github.io/2019/04/10/AppWidget开发指南/AppWidget开发指南/原生尺寸对应表.png">
 
 
 
@@ -115,13 +125,13 @@
 
 
 
-  <link rel="canonical" href="http://luckyhappybear.github.io/">
+  <link rel="canonical" href="http://luckyhappybear.github.io/2019/04/10/AppWidget开发指南/">
 
 
 
 
 
-  <title>大雄的博客</title>
+  <title>AppWidget开发指南 | 大雄的博客</title>
   
 
 
@@ -140,8 +150,7 @@
     
   
 
-  <div class="container sidebar-position-left 
-  page-home">
+  <div class="container sidebar-position-left page-post-detail">
     <div class="headband"></div>
 
     <header id="header" class="header" itemscope="" itemtype="http://schema.org/WPHeader">
@@ -244,9 +253,9 @@
         <div class="content-wrap">
           <div id="content" class="content">
             
-  <section id="posts" class="posts-expand">
+
+  <div id="posts" class="posts-expand">
     
-      
 
   
 
@@ -276,9 +285,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2019/04/10/AppWidget开发指南/" itemprop="url">AppWidget开发指南</a></h1>
+          <h1 class="post-title" itemprop="name headline">AppWidget开发指南</h1>
         
 
         <div class="post-meta">
@@ -328,9 +335,7 @@
       
 
       
-        
-          
-            <h1 id="AppWidget开发指南"><a href="#AppWidget开发指南" class="headerlink" title="AppWidget开发指南"></a>AppWidget开发指南</h1><h2 id="AppWidget简介"><a href="#AppWidget简介" class="headerlink" title="AppWidget简介"></a>AppWidget简介</h2><p>&emsp;&emsp;AppWidget 即桌面小部件，是能直接显示在Android系统桌面上的小程序，是android系统应用开发层面的一部分，但是又有特殊用途，而且会成为整个android系统的亮点。<br>&emsp;&emsp;我们可以把它认为是app的一个微缩窗口，我们可以通过它来快速的展示一些信息，做一些简单的交互，我们通常将AppWidget嵌入到launcher中，用户不用进入app中即可在桌面进行交互及操作，简单方便，对用户体验是一个较大的提升，目前比较普遍并且常用的小部件比如时钟，天气，音乐播放器等都是十分简单好用的小部件。</p>
+        <h1 id="AppWidget开发指南"><a href="#AppWidget开发指南" class="headerlink" title="AppWidget开发指南"></a>AppWidget开发指南</h1><h2 id="AppWidget简介"><a href="#AppWidget简介" class="headerlink" title="AppWidget简介"></a>AppWidget简介</h2><p>&emsp;&emsp;AppWidget 即桌面小部件，是能直接显示在Android系统桌面上的小程序，是android系统应用开发层面的一部分，但是又有特殊用途，而且会成为整个android系统的亮点。<br>&emsp;&emsp;我们可以把它认为是app的一个微缩窗口，我们可以通过它来快速的展示一些信息，做一些简单的交互，我们通常将AppWidget嵌入到launcher中，用户不用进入app中即可在桌面进行交互及操作，简单方便，对用户体验是一个较大的提升，目前比较普遍并且常用的小部件比如时钟，天气，音乐播放器等都是十分简单好用的小部件。</p>
 <h2 id="AppWidget的简单实现"><a href="#AppWidget的简单实现" class="headerlink" title="AppWidget的简单实现"></a>AppWidget的简单实现</h2><p>&emsp;&emsp;在应用中实现一个小部件实际上只要遵循特定的步骤我们很快的就能创建一个简单的小部件，因为系统中的AppWidget框架已经为我们实现了90%的部分，我们只需要按照特定的套路进行实现即可，在实现一个简单的小部件时时我们仅需三步即可完成。</p>
 <h3 id="第一步：自定义小部件界面"><a href="#第一步：自定义小部件界面" class="headerlink" title="第一步：自定义小部件界面"></a>第一步：自定义小部件界面</h3><p>&emsp;&emsp;首先我们需要定义一个布局文件，你可以按照自己的想法对它进行布局，将他设计成你想要的样子，但是我们在这里需要注意一点，那就是系统默认的小部件布局中支持的布局及组件较为有限，只支持以下布局及组件：</p>
 <ul>
@@ -396,8 +401,6 @@
 <p>&emsp;&emsp;经过以上步骤，我们便可以得到一个简单的含listView的小部件，点击其每一项就会弹出Toast显示该项中TextView的内容，最后的实现效果如下所示：<br><img src="AppWidget开发指南/listView效果图.png" alt="listView效果图"></p>
 <h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>&emsp;&emsp;经过上面的总结，我们可以发现，实现一个简单的桌面小部件实际上是一个十分轻松的过程，它的实现十分固化，大部分的事情都由系统来管控，我们能做的只是实现相应的回调，但是实际上这些回调的调用时机等我们并不能直接控制，但是在实现一个复杂的小部件时仍有许多内容需要我们注意，数据处理时也要极为小心，这篇总结仅仅是实现了最最基本的内容，我们可以在此基础上进行扩展，开发出好看又使用的桌面小部件应用。</p>
 
-          
-        
       
     </div>
     
@@ -412,156 +415,36 @@
 
     <footer class="post-footer">
       
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://luckyhappybear.github.io/2018/10/28/新的征程/">
-
-    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="LuckyHappyBear">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="大雄的博客">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2018/10/28/新的征程/" itemprop="url">新的征程</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">Posted on</span>
-              
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-10-28T20:05:55+08:00">
-                2018-10-28
-              </time>
-            
-
-            
-
-            
-          </span>
-
+        <div class="post-tags">
           
-            <span class="post-category">
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">In</span>
-              
-              
-                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing">
-                  <a href="/categories/随笔/" itemprop="url" rel="index">
-                    <span itemprop="name">随笔</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
+            <a href="/tags/Android开发，小部件/" rel="tag"># Android开发，小部件</a>
           
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
         </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h1 id="新的征程"><a href="#新的征程" class="headerlink" title="新的征程"></a>新的征程</h1><p>&emsp;&emsp;学如逆水行舟，不进则退。在计算机行业尤其如此，技术日新月异，不紧跟步伐，及时充电就会被行业所淘汰。实际上无论是目前所接触的技术的积累还是新技术的学习，记录是必不可少的，随着年纪的增长，后退的不仅仅是每个程序员的发际线，还有我们那可怜的记忆力。你会时常发现你学习过的东西如过眼云烟，闭目即忘，下次在碰到时往往又是一脸蒙蔽。<br>&emsp;&emsp;博客是程序员的一大记录利器，在书写博客的同时可以增强记忆，可以与大家分享，更可以共同进步共同成长，百利而无一害，在此前我尝试过CSDN，简书等可以发布博客的网站，体验也都不错，但是定制程度都很低，不能体现出我们的格调，作为一个有格调的程序员，我决定在gitub上继续我的博客之旅，开始一段新的征程，在技术的路上继续前行。<br>&emsp;&emsp;坚持最重要的，持之以恒是我的座右铭，我将他呈现在我的博客网站最醒目的位置，希望能够和大家一起成长，成为一个优秀的专业的技术人员。<br>&emsp;&emsp;与君共勉。</p>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
       
 
       
       
-        <div class="post-eof"></div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/10/28/新的征程/" rel="next" title="新的征程">
+                <i class="fa fa-chevron-left"></i> 新的征程
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
       
     </footer>
   </div>
@@ -571,10 +454,11 @@
   </article>
 
 
-    
-  </section>
 
-  
+    <div class="post-spread">
+      
+    </div>
+  </div>
 
 
           </div>
@@ -582,6 +466,10 @@
 
 
           
+
+  
+
+
 
         </div>
         
@@ -602,8 +490,17 @@
       
 
       
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
 
-      <section class="site-overview-wrap sidebar-panel sidebar-panel-active">
+      <section class="site-overview-wrap sidebar-panel">
         <div class="site-overview">
           <div class="site-author motion-element" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
             
@@ -663,6 +560,22 @@
         </div>
       </section>
 
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#AppWidget开发指南"><span class="nav-number">1.</span> <span class="nav-text">AppWidget开发指南</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#AppWidget简介"><span class="nav-number">1.1.</span> <span class="nav-text">AppWidget简介</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#AppWidget的简单实现"><span class="nav-number">1.2.</span> <span class="nav-text">AppWidget的简单实现</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#第一步：自定义小部件界面"><span class="nav-number">1.2.1.</span> <span class="nav-text">第一步：自定义小部件界面</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#第二步：定义小部件配置信息"><span class="nav-number">1.2.2.</span> <span class="nav-text">第二步：定义小部件配置信息</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#第三步：定义小部件类"><span class="nav-number">1.2.3.</span> <span class="nav-text">第三步：定义小部件类</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#AppWidget之ListView"><span class="nav-number">1.3.</span> <span class="nav-text">AppWidget之ListView</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#第一步：定义布局"><span class="nav-number">1.3.1.</span> <span class="nav-text">第一步：定义布局</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#第二步：继承实现RemoteViewsService"><span class="nav-number">1.3.2.</span> <span class="nav-text">第二步：继承实现RemoteViewsService</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#第三步：Service的新建及点击模板的定义"><span class="nav-number">1.3.3.</span> <span class="nav-text">第三步：Service的新建及点击模板的定义</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#总结"><span class="nav-number">1.4.</span> <span class="nav-text">总结</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
       
 
       
@@ -796,6 +709,10 @@
   
 
   
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
 
   
 
