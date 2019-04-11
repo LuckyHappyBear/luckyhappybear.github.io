@@ -1,0 +1,762 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-CN">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="UI适配,">
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="标题字体自适应缩放概述　　Rom8.1中针对标题栏大字体存在以下一致性策略:　　1. 如果标题内容超长,导致无法完全显示,则进行字体“降档”　　2. 如果处于选择模式下,标题显示的是x selected且内容超长无法显示,那么需要省略”selected”字符串，仅显示项数一个数字。 “降档”实现原理　　我们该如何实现“降档”的需求呢？实际上可以使用Android 8.0的新增特性，Autosizi">
+<meta name="keywords" content="UI适配">
+<meta property="og:type" content="article">
+<meta property="og:title" content="标题栏字体自适应缩放">
+<meta property="og:url" content="http://luckyhappybear.github.io/2019/04/11/标题栏字体自适应缩放/index.html">
+<meta property="og:site_name" content="大雄的博客">
+<meta property="og:description" content="标题字体自适应缩放概述　　Rom8.1中针对标题栏大字体存在以下一致性策略:　　1. 如果标题内容超长,导致无法完全显示,则进行字体“降档”　　2. 如果处于选择模式下,标题显示的是x selected且内容超长无法显示,那么需要省略”selected”字符串，仅显示项数一个数字。 “降档”实现原理　　我们该如何实现“降档”的需求呢？实际上可以使用Android 8.0的新增特性，Autosizi">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2019-04-11T15:05:40.461Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="标题栏字体自适应缩放">
+<meta name="twitter:description" content="标题字体自适应缩放概述　　Rom8.1中针对标题栏大字体存在以下一致性策略:　　1. 如果标题内容超长,导致无法完全显示,则进行字体“降档”　　2. 如果处于选择模式下,标题显示的是x selected且内容超长无法显示,那么需要省略”selected”字符串，仅显示项数一个数字。 “降档”实现原理　　我们该如何实现“降档”的需求呢？实际上可以使用Android 8.0的新增特性，Autosizi">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: 'Author'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://luckyhappybear.github.io/2019/04/11/标题栏字体自适应缩放/">
+
+
+
+
+
+  <title>标题栏字体自适应缩放 | 大雄的博客</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope="" itemtype="http://schema.org/WebPage" lang="zh-CN">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope="" itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">大雄的博客</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">持之以恒</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            Home
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br>
+            
+            About
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            Tags
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            Categories
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            Archives
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://luckyhappybear.github.io/2019/04/11/标题栏字体自适应缩放/">
+
+    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="LuckyHappyBear">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/小叮当.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="大雄的博客">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">标题栏字体自适应缩放</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2019-04-11T23:04:25+08:00">
+                2019-04-11
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing">
+                  <a href="/categories/Android/" itemprop="url" rel="index">
+                    <span itemprop="name">Android</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="标题字体自适应缩放"><a href="#标题字体自适应缩放" class="headerlink" title="标题字体自适应缩放"></a>标题字体自适应缩放</h1><h2 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h2><p>　　Rom8.1中针对标题栏大字体存在以下一致性策略:<br>　　1. 如果标题内容超长,导致无法完全显示,则进行字体“降档”<br>　　2. 如果处于选择模式下,标题显示的是x selected且内容超长无法显示,那么需要省略”selected”字符串，仅显示项数一个数字。</p>
+<h2 id="“降档”实现原理"><a href="#“降档”实现原理" class="headerlink" title="“降档”实现原理"></a>“降档”实现原理</h2><p>　　我们该如何实现“降档”的需求呢？实际上可以使用Android 8.0的新增特性，Autosizing TextView，关于这个特性可以参见下面链接，有十分详细的解释：<br>　　<a href="https://blog.csdn.net/dale999/article/details/70145152?locationNum=9&amp;fps=1" target="_blank" rel="noopener">Autosizing TextViews</a><br>　　有了这个新特性，我们实现这个“降档”需求的思路也就有了，实际上我们的实现手段并不是真正的降档而是去减小字体大小，直到你设置的autoSizeMinTextSize（最小尺寸），由于这些设置的属性仅针对TextView，而我们在指定标题样式时仅能指定TextAppearance，无法直接设置这三个属性给标题title，因此我们想要在app层实现这个需求，就需要使用customView进行定制。<br>　　接下来我们会针对最简单的ActionBar与ToolBar进行基本的适配指南。</p>
+<h2 id="ActionBar相关实现"><a href="#ActionBar相关实现" class="headerlink" title="ActionBar相关实现"></a>ActionBar相关实现</h2><p>　　对于ActionBar，需为ActionBar指定customView来进行标题栏的定制，在使用ActionBar的地方如下指定customView：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="comment">// 我们自定义的标题</span></span><br><span class="line">View view = getLayoutInflater().inflate(R.layout.actionbar, <span class="keyword">null</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 设置我们自定义的标题view</span></span><br><span class="line">ActionBar actionBar = getActionBar();</span><br><span class="line">actionBar.setCustomView(view);</span><br><span class="line">actionBar.setDisplayShowCustomEnabled(<span class="keyword">true</span>);</span><br><span class="line"><span class="comment">// 设置不显示标题</span></span><br><span class="line">getActionBar().setDisplayShowTitleEnabled(<span class="keyword">false</span>);</span><br></pre></td></tr></table></figure></p>
+<p>　　自定义的标题view actionbar.xml如下所示：<br><figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">&lt;?xml version=<span class="string">"1.0"</span> encoding=<span class="string">"utf-8"</span>?&gt;</span><br><span class="line">&lt;LinearLayout xmlns:android=<span class="string">"http://schemas.android.com/apk/res/android"</span></span><br><span class="line">    android:layout_width=<span class="string">"match_parent"</span></span><br><span class="line">    android:layout_height=<span class="string">"match_parent"</span>&gt;</span><br><span class="line">    &lt;TextView</span><br><span class="line">        android:id=<span class="string">"@+id/actionbar_title"</span></span><br><span class="line">        android:layout_height=<span class="string">"match_parent"</span></span><br><span class="line">        android:layout_width=<span class="string">"match_parent"</span></span><br><span class="line">        android:gravity=<span class="string">"center_vertical"</span></span><br><span class="line">        android:textSize=<span class="string">"字体大小"</span></span><br><span class="line">        android:text=<span class="string">"文本内容"</span></span><br><span class="line">        android:textColor=<span class="string">"文本颜色"</span></span><br><span class="line">        android:maxLines=<span class="string">"1"</span></span><br><span class="line">        android:ellipsize=<span class="string">"end"</span></span><br><span class="line">        android:autoSizeMinTextSize=<span class="string">"10sp"</span></span><br><span class="line">        android:autoSizeMaxTextSize=<span class="string">"50sp"</span></span><br><span class="line">        android:autoSizeStepGranularity=<span class="string">"2sp"</span></span><br><span class="line">        android:autoSizeTextType=<span class="string">"uniform"</span> /&gt;</span><br><span class="line">&lt;/LinearLayout&gt;</span><br></pre></td></tr></table></figure></p>
+<p>　　如上所示为对于自定义title的设定，这里需要额外指定的属性仅有autoSizeMinTextSize（最小尺寸），autoSizeMaxTextSize（最大尺寸），autoSizeStepGranularity（变化步长）及autoSizeTextType（想要拥有自动缩放的功能必须指定为uniform），这里的最大最小目前还未确定，模块负责人需要与自己的UE进行确定，进行定值，例子中仅为随意的取值，并不是规范值。<br>　　经过上面的步骤，一个最简单的可缩放标题大小的actionBar就定制完成了。</p>
+<h2 id="Toolbar相关实现"><a href="#Toolbar相关实现" class="headerlink" title="Toolbar相关实现"></a>Toolbar相关实现</h2><p>　　如果标题栏是使用Toolbar进行实现的，我们的基本实现思路和ActionBar也是一样的，即对ToolBar进行自定义，我们仍旧拿最简单Toolbar进行举例，例如我们的Activity的布局如下所示：<br><figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">&lt;?xml version=<span class="string">"1.0"</span> encoding=<span class="string">"utf-8"</span>?&gt;</span><br><span class="line">&lt;LinearLayout</span><br><span class="line">    xmlns:android=<span class="string">"http://schemas.android.com/apk/res/android"</span></span><br><span class="line">    android:layout_width=<span class="string">"match_parent"</span></span><br><span class="line">    android:layout_height=<span class="string">"match_parent"</span></span><br><span class="line">    android:orientation=<span class="string">"vertical"</span>&gt;</span><br><span class="line"></span><br><span class="line">    &lt;Toolbar</span><br><span class="line">        android:id=<span class="string">"@+id/toolbar"</span></span><br><span class="line">        android:layout_width=<span class="string">"match_parent"</span></span><br><span class="line">        android:layout_height=<span class="string">"46dp"</span></span><br><span class="line">        android:titleTextAppearance=<span class="string">"@style/toolBarTitleStyle"</span></span><br><span class="line">        android:background=<span class="string">"@android:color/black"</span>&gt;</span><br><span class="line">    &lt;/Toolbar&gt;</span><br><span class="line"></span><br><span class="line">&lt;/LinearLayout&gt;</span><br></pre></td></tr></table></figure></p>
+<p>　　如上，我们的布局中仅有一个高度为46dp的ToolBar，我们会为其指定titleTextAppearance指定标题样式，并指定background等，之后我们会在activity的onCreate()方法中如下进行设置来使用ToolBar:<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Toolbar toolbar = findViewById(R.id.toolbar);</span><br><span class="line">setActionBar(toolbar);</span><br></pre></td></tr></table></figure></p>
+<p>　　如上所示我们就创建了一个最简单的Toolbar,然后设置标题时仅需调用相应的setTitle()方法即可进行标题的设置。为了满足我们的自动缩放的需求我们同样需要自定义标题，我们仅需将布局文件如下修改即可：<br><figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line">&lt;?xml version=<span class="string">"1.0"</span> encoding=<span class="string">"utf-8"</span>?&gt;</span><br><span class="line">&lt;LinearLayout</span><br><span class="line">    xmlns:android=<span class="string">"http://schemas.android.com/apk/res/android"</span></span><br><span class="line">    android:layout_width=<span class="string">"match_parent"</span></span><br><span class="line">    android:layout_height=<span class="string">"match_parent"</span></span><br><span class="line">    android:orientation=<span class="string">"vertical"</span>&gt;</span><br><span class="line">    &lt;Toolbar</span><br><span class="line">        android:id=<span class="string">"@+id/toolbar"</span></span><br><span class="line">        android:layout_width=<span class="string">"match_parent"</span></span><br><span class="line">        android:layout_height=<span class="string">"46dp"</span></span><br><span class="line">        android:background=<span class="string">"@android:color/black"</span>&gt;</span><br><span class="line">        &lt;TextView</span><br><span class="line">            android:id=<span class="string">"@+id/actionbar_title"</span></span><br><span class="line">            android:layout_width=<span class="string">"match_parent"</span></span><br><span class="line">            android:layout_height=<span class="string">"match_parent"</span></span><br><span class="line">            android:gravity=<span class="string">"center_vertical"</span></span><br><span class="line">            android:textSize=<span class="string">"字体大小"</span></span><br><span class="line">            android:text=<span class="string">"文本内容"</span></span><br><span class="line">            android:textColor=<span class="string">"文本颜色"</span></span><br><span class="line">            android:maxLines=<span class="string">"1"</span></span><br><span class="line">            android:ellipsize=<span class="string">"end"</span></span><br><span class="line">            android:autoSizeMinTextSize=<span class="string">"10sp"</span></span><br><span class="line">            android:autoSizeMaxTextSize=<span class="string">"50sp"</span></span><br><span class="line">            android:autoSizeStepGranularity=<span class="string">"2sp"</span></span><br><span class="line">            android:autoSizeTextType=<span class="string">"uniform"</span> /&gt;</span><br><span class="line">    &lt;/Toolbar&gt;</span><br><span class="line">&lt;/LinearLayout&gt;</span><br></pre></td></tr></table></figure></p>
+<p>　　如上进行布局定义，之后在activity的onCreate()方法中如下进行指定：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">Toolbar toolbar = findViewById(R.id.toolbar);</span><br><span class="line">setActionBar(toolbar);</span><br><span class="line">ActionBar actionBar = getActionBar();</span><br><span class="line"><span class="keyword">if</span> (actionBar != <span class="keyword">null</span>) &#123;</span><br><span class="line">    <span class="comment">// 设定是否显示左上角图标</span></span><br><span class="line">    getActionBar().setDisplayShowHomeEnabled(<span class="keyword">true</span>);</span><br><span class="line">    <span class="comment">// 设置不显示标题</span></span><br><span class="line">    getActionBar().setDisplayShowTitleEnabled(<span class="keyword">false</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>　　如上所示，仅需如此定义便能实现一个基本的可自动缩放的标题，与Actionbar的缩放标题实现原理完全一致，都是使用自定义的TextView作为title的容器，利用Android O的新增特性实现自动缩放的需求，上面的两个例子仅为只含标题的标题栏，对于各个应用可能在标题栏上存在较复杂的交互，但是基本的实现原理都是一致的，需要各应用自行适配。  </p>
+<h2 id="min，max尺寸设置及1档适配"><a href="#min，max尺寸设置及1档适配" class="headerlink" title="min，max尺寸设置及1档适配"></a>min，max尺寸设置及1档适配</h2><p>　　之前未给出autoSizeMinTextSize（最小尺寸），autoSizeMaxTextSize（最大尺寸）及autoSizeStepGranularity（变化步长），目前与UE讨论得出的的方案为：1档字体不能继续缩小，其他挡字体的最小值不能比1档字体更小，由于系统的1~5档变化为字体大小乘以指定数值，因此1~5档对应的比例值分别为：0.85，1，1.15，1.3，1.5（五档仅针对通讯适用）；<br>　　综上我们的最小尺寸计算方式为：1档字体大小乘以0.85的dp值上取整，例如标题字体大小为17sp，那么我们设置的autoSizeMinTextSize的值即为17<em>0.85上取整为15dp），这样可以保证2，3，4，5档的最小大小也会大于1档的字体大小（2档的最小大小为15</em>1dp  &gt; 17<em>0.85dp（1档大小）），而最大尺寸设为17sp即可，我们在文字不能充满textView的时候不能增大字体大小，因此上限与原字体大小相同即可，不需要重新设置，autoSizeStepGranularity设置为1sp即可。各个app的标题字体大小一般为17sp，有不一样的可以同样根据此方式计算。此处需要注意一个问题，我们的上限一定不能比下限更小，而17sp</em>0.85的dp值为14.45小于下限因此我们不能使用15作为下限，这种情况下与UE讨论后认为可以使用14dp的下限值来替代。<br>　　另需要在1档的时候关闭自动缩放功能，因此在侦测到目前为1档时我们需要关闭TextView的自动缩放，侦测目前系统处于几档可以使用如下接口：　　<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">float</span> relFontScale = Settings.System.getFloat(getContentResolver(), Settings.System.REAL_FONT_SCALE, <span class="number">1</span>);</span><br></pre></td></tr></table></figure></p>
+<p>　　当relFontScale为0.85时即为1档，此时关闭自动缩放，调用如下方法即可：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">mAutoSizeTextView.setAutoSizeTextTypeWithDefaults(TextView.AUTO_SIZE_TEXT_TYPE_NONE);</span><br><span class="line">mAutoSizeTextView.setTextSize(<span class="number">17</span>);</span><br></pre></td></tr></table></figure></p>
+<p>　　经过以上步骤，我们就可以满足相应的ue需求了。</p>
+<h2 id="选择模式下的标题适配"><a href="#选择模式下的标题适配" class="headerlink" title="选择模式下的标题适配"></a>选择模式下的标题适配</h2><p>　　UE对于选择模式下也有适配需求，具体需求为：多选模式下，固定标题显示最大宽度，当“已选择x项”字符串超长时，只显示已选择数量”x”,此部分的实现此枪由于适配多选进入动效，大部分的应用对于多选下的标题栏应该都有过适配，标题的TextView基本都为自定义的TextView，我们可以拿到展示标题的TextView，如果有app仍使用自带的标题，之前的自定义步骤需要在再进行一遍。<br>　　有了以上的前提（即可获得标题的TextView），我们在每次将选择数量设置到TextView中时需要进行如下设定：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setSelectText</span><span class="params">(<span class="keyword">int</span> count)</span></span>&#123;</span><br><span class="line">    String selectedString;</span><br><span class="line">    <span class="comment">// 此值为UE设定的最大的宽度</span></span><br><span class="line">    <span class="keyword">int</span> maxWidth = xxx;</span><br><span class="line">    <span class="comment">// 生成完整字符串，count &gt; 0时为“已选中x项”，count = 0时为“全选”</span></span><br><span class="line">    <span class="keyword">if</span> (count &gt; <span class="number">0</span>) &#123;</span><br><span class="line">        selectedString = mContext</span><br><span class="line">                .getResources().getQuantityString(</span><br><span class="line">                        R.plurals.mediapicker_gallery_title_selection,</span><br><span class="line">                        count,</span><br><span class="line">                        count);</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        selectedString = mContext.getString(R.string.menu_select_all);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// mAutoSizeTextView即为我们的标题容器</span></span><br><span class="line">    <span class="keyword">if</span> (mAutoSizeTextView != <span class="keyword">null</span>) &#123;</span><br><span class="line">        adjustTitleDisplay(selectedString, count, mAutoSizeTextView, maxWidth);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">adjustTitleDisplay</span><span class="params">(String selectedString, <span class="keyword">int</span> count, TextView textView, <span class="keyword">int</span> maxWidth)</span> </span>&#123;</span><br><span class="line">    <span class="comment">// 如果超长则直接显示选中的项数，否则显示完整的字符串</span></span><br><span class="line">    <span class="keyword">if</span> (textView.getPaint().measureText(selectedString) &gt; maxWidth &amp;&amp; count &gt; <span class="number">0</span>) &#123;</span><br><span class="line">        textView.setText(String.valueOf(count));</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        textView.setText(selectedString);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>　　经过上面的设定我们就能完成多选模式下标题适配的需求了，以上为实现标题栏大字体一致性的基本指南。</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/UI适配/" rel="tag"># UI适配</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/04/11/拨号盘搜索/" rel="next" title="拨号盘搜索">
+                <i class="fa fa-chevron-left"></i> 拨号盘搜索
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="/images/小叮当.png" alt="LuckyHappyBear">
+            
+              <p class="site-author-name" itemprop="name">LuckyHappyBear</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">7</span>
+                  <span class="site-state-item-name">posts</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">2</span>
+                  <span class="site-state-item-name">categories</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">7</span>
+                  <span class="site-state-item-name">tags</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#标题字体自适应缩放"><span class="nav-number">1.</span> <span class="nav-text">标题字体自适应缩放</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#概述"><span class="nav-number">1.1.</span> <span class="nav-text">概述</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#“降档”实现原理"><span class="nav-number">1.2.</span> <span class="nav-text">“降档”实现原理</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#ActionBar相关实现"><span class="nav-number">1.3.</span> <span class="nav-text">ActionBar相关实现</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Toolbar相关实现"><span class="nav-number">1.4.</span> <span class="nav-text">Toolbar相关实现</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#min，max尺寸设置及1档适配"><span class="nav-number">1.5.</span> <span class="nav-text">min，max尺寸设置及1档适配</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#选择模式下的标题适配"><span class="nav-number">1.6.</span> <span class="nav-text">选择模式下的标题适配</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">LuckyHappyBear</span>
+
+  
+</div>
+
+
+  <div class="powered-by">Powered by <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a></div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">Theme &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Pisces</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/canvas-nest/canvas-nest.min.js"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
