@@ -1,0 +1,859 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-CN">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="UI适配，异型屏,">
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="水滴屏适配概述&amp;emsp;随着高屏占比机型越来越受欢迎，各个手机厂商绞尽脑汁的扩展屏幕大小，在此背景下，刘海屏营运而生，在Google还未进行系统级支持之前，各厂商就已经有了自己的刘海屏手机及相应的适配方案。而从Android P开始，Google也提供了系统级的支持，提供了相应的接口供开发者来适配刘海屏，本文档旨在介绍Android P上Google官方提供的接口及依托于此的刘海屏适配方案，对于">
+<meta name="keywords" content="UI适配，异型屏">
+<meta property="og:type" content="article">
+<meta property="og:title" content="刘海屏适配">
+<meta property="og:url" content="http://luckyhappybear.github.io/2019/04/11/刘海屏适配/index.html">
+<meta property="og:site_name" content="大雄的博客">
+<meta property="og:description" content="水滴屏适配概述&amp;emsp;随着高屏占比机型越来越受欢迎，各个手机厂商绞尽脑汁的扩展屏幕大小，在此背景下，刘海屏营运而生，在Google还未进行系统级支持之前，各厂商就已经有了自己的刘海屏手机及相应的适配方案。而从Android P开始，Google也提供了系统级的支持，提供了相应的接口供开发者来适配刘海屏，本文档旨在介绍Android P上Google官方提供的接口及依托于此的刘海屏适配方案，对于">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="http://luckyhappybear.github.io/2019/04/11/刘海屏适配/刘海屏图示.png">
+<meta property="og:image" content="http://luckyhappybear.github.io/2019/04/11/刘海屏适配/显示状态栏界面.png">
+<meta property="og:image" content="http://luckyhappybear.github.io/2019/04/11/刘海屏适配/未适配全屏显示界面.png">
+<meta property="og:image" content="http://luckyhappybear.github.io/2019/04/11/刘海屏适配/全屏显示及页面延伸.png">
+<meta property="og:image" content="http://luckyhappybear.github.io/2019/04/11/刘海屏适配/适配的全屏显示界面.png">
+<meta property="og:image" content="http://luckyhappybear.github.io/2019/04/11/刘海屏适配/沉浸式未适配.png">
+<meta property="og:image" content="http://luckyhappybear.github.io/2019/04/11/刘海屏适配/沉浸式适配.png">
+<meta property="og:updated_time" content="2019-04-11T14:30:32.743Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="刘海屏适配">
+<meta name="twitter:description" content="水滴屏适配概述&amp;emsp;随着高屏占比机型越来越受欢迎，各个手机厂商绞尽脑汁的扩展屏幕大小，在此背景下，刘海屏营运而生，在Google还未进行系统级支持之前，各厂商就已经有了自己的刘海屏手机及相应的适配方案。而从Android P开始，Google也提供了系统级的支持，提供了相应的接口供开发者来适配刘海屏，本文档旨在介绍Android P上Google官方提供的接口及依托于此的刘海屏适配方案，对于">
+<meta name="twitter:image" content="http://luckyhappybear.github.io/2019/04/11/刘海屏适配/刘海屏图示.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: 'Author'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://luckyhappybear.github.io/2019/04/11/刘海屏适配/">
+
+
+
+
+
+  <title>刘海屏适配 | 大雄的博客</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope="" itemtype="http://schema.org/WebPage" lang="zh-CN">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope="" itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">大雄的博客</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">持之以恒</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            Home
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br>
+            
+            About
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            Tags
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            Categories
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            Archives
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://luckyhappybear.github.io/2019/04/11/刘海屏适配/">
+
+    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="LuckyHappyBear">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/小叮当.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="大雄的博客">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">刘海屏适配</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2019-04-11T22:24:48+08:00">
+                2019-04-11
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing">
+                  <a href="/categories/Android/" itemprop="url" rel="index">
+                    <span itemprop="name">Android</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="水滴屏适配"><a href="#水滴屏适配" class="headerlink" title="水滴屏适配"></a>水滴屏适配</h1><h2 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h2><p>&emsp;随着高屏占比机型越来越受欢迎，各个手机厂商绞尽脑汁的扩展屏幕大小，在此背景下，刘海屏营运而生，在Google还未进行系统级支持之前，各厂商就已经有了自己的刘海屏手机及相应的适配方案。而从Android P开始，Google也提供了系统级的支持，提供了相应的接口供开发者来适配刘海屏，本文档旨在介绍Android P上Google官方提供的接口及依托于此的刘海屏适配方案，对于各个厂商自己开发的刘海屏SDK及自己的适配方案就不在此文档中进行说明了。</p>
+<h2 id="Android-P适配方案"><a href="#Android-P适配方案" class="headerlink" title="Android P适配方案"></a>Android P适配方案</h2><h3 id="刘海屏布局"><a href="#刘海屏布局" class="headerlink" title="刘海屏布局"></a>刘海屏布局</h3><p>&emsp;我们先通过一张图片对刘海屏的布局及其安全、危险区域进行说明，图示如下：</p>
+<p><img src="/2019/04/11/刘海屏适配/刘海屏图示.png" alt="刘海屏图示"></p>
+<p>&emsp;如上图所示，这是从网上下载的一张刘海屏通用图示（仅上面存在刘海，实际上在开发者选项中还有上下均有刘海的情况），可以看到红色部分为状态栏区域，Google提供的刘海规格中，刘海高度是一定不会超过状态栏高度的，图示中仅展示了刘海高度 = 状态栏高度的情况，实际上还有刘海高度 &lt; 状态栏高度的情况，例如水滴屏。有了这个基础图示，我们对刘海屏就有了一个大概的认识，让我们继续进行下面的适配之旅。</p>
+<h3 id="显示状态栏的界面适配"><a href="#显示状态栏的界面适配" class="headerlink" title="显示状态栏的界面适配"></a>显示状态栏的界面适配</h3><p>&emsp;为了测试刘海屏对于我们的界面的影响，我们先写一个小小的测试程序，布局及代码如下所示：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 布局</span></span><br><span class="line">&lt;?xml version=<span class="string">"1.0"</span> encoding=<span class="string">"utf-8"</span>?&gt;</span><br><span class="line">&lt;RelativeLayout xmlns:android=<span class="string">"http://schemas.android.com/apk/res/android"</span></span><br><span class="line">    xmlns:app=<span class="string">"http://schemas.android.com/apk/res-auto"</span></span><br><span class="line">    xmlns:tools=<span class="string">"http://schemas.android.com/tools"</span></span><br><span class="line">    android:layout_width=<span class="string">"match_parent"</span></span><br><span class="line">    android:layout_height=<span class="string">"match_parent"</span></span><br><span class="line">    tools:context=<span class="string">"com.example.luckybear.testapplication.MainActivity"</span>&gt;</span><br><span class="line"></span><br><span class="line">    &lt;TextView</span><br><span class="line">        android:id=<span class="string">"@+id/tv_top"</span></span><br><span class="line">        android:layout_width=<span class="string">"wrap_content"</span></span><br><span class="line">        android:layout_height=<span class="string">"wrap_content"</span></span><br><span class="line">        android:text=<span class="string">"I am top"</span></span><br><span class="line">        android:textSize=<span class="string">"20sp"</span></span><br><span class="line">        android:layout_alignParentTop=<span class="string">"true"</span></span><br><span class="line">        android:layout_centerHorizontal=<span class="string">"true"</span>/&gt;</span><br><span class="line"></span><br><span class="line">    &lt;TextView</span><br><span class="line">        android:id=<span class="string">"@+id/tv_bottom"</span></span><br><span class="line">        android:layout_width=<span class="string">"wrap_content"</span></span><br><span class="line">        android:layout_height=<span class="string">"wrap_content"</span></span><br><span class="line">        android:text=<span class="string">"I am bottom"</span></span><br><span class="line">        android:textSize=<span class="string">"20sp"</span></span><br><span class="line">        android:layout_alignParentBottom=<span class="string">"true"</span></span><br><span class="line">        android:layout_centerHorizontal=<span class="string">"true"</span>/&gt;</span><br><span class="line"></span><br><span class="line">&lt;/RelativeLayout&gt;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 主界面代码</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MainActivity</span> <span class="keyword">extends</span> <span class="title">AppCompatActivity</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">onCreate</span><span class="params">(Bundle savedInstanceState)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">super</span>.onCreate(savedInstanceState);</span><br><span class="line">        setContentView(R.layout.activity_main);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">onResume</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">super</span>.onResume();</span><br><span class="line">        Log.i(<span class="string">"HX_TAG"</span>, <span class="string">"height is "</span> + getWindowManager().getDefaultDisplay().getHeight());</span><br><span class="line">        Log.i(<span class="string">"HX_TAG"</span>, <span class="string">"status height is "</span> + getStatusBarHeight(<span class="keyword">this</span>));</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">int</span> <span class="title">getStatusBarHeight</span><span class="params">(Context context)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">int</span> result = <span class="number">0</span>;</span><br><span class="line">        <span class="keyword">int</span> resourceId = context.getResources().getIdentifier(<span class="string">"status_bar_height"</span>, <span class="string">"dimen"</span>, <span class="string">"android"</span>);</span><br><span class="line">        <span class="keyword">if</span> (resourceId &gt; <span class="number">0</span>) &#123;</span><br><span class="line">            result = context.getResources().getDimensionPixelSize(resourceId);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> result;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>&emsp;可以看到，这个界面非常简单，仅仅是在界面的最上端及最下端居中显示了两个textView，分别显示”I am top”和”I am bottom”，我们在开发者选项中打开水滴屏的模拟选项，在显示状态栏时我们的界面显示如下：</p>
+<p><img src="/2019/04/11/刘海屏适配/显示状态栏界面.png" alt="有状态栏界面显示"></p>
+<p>&emsp;如上所示，对于google提供的刘海屏规格来说，刘海的高度 &lt;= 系统状态栏，因此对于有状态栏的界面基本上是不会造成影响的，因为刘海屏已经包含在状态栏中了。但是这里实际上也存在问题，由于我们要显示刘海，而状态栏又必须要将刘海屏包含在内，因此有可能会产生状态栏高度改变的问题，我们在代码中打印出了两行log，分别为可显示屏幕高度及状态栏高度，当无刘海时，log打印如下：</p>
+<p><code>12-12 15:49:25.349 22891-22891/com.example.luckybear.testapplication I/HX_TAG: height is 1344</code></p>
+<p><code>12-12 15:49:25.350 22891-22891/com.example.luckybear.testapplication I/HX_TAG: status height is 48</code></p>
+<p>当存在水滴形刘海时，log如下：</p>
+<p><code>12-12 15:50:55.594 22891-22891/com.example.luckybear.testapplication I/HX_TAG: height is 1289</code></p>
+<p><code>12-12 15:50:55.596 22891-22891/com.example.luckybear.testapplication I/HX_TAG: status height is 60</code></p>
+<p>&emsp;如上所示，当我们没有水滴形刘海时我们的可显示区域高度为1344px，状态栏高度为48px，而当我们显示刘海屏时可显示区域高度为1289px，状态栏高度为60px，至于为什么可显示区域的高度减少了55px而不是状态栏高度的60px，这是因为水滴形刘海的高度为55px，并没有完全占满状态栏，可显示区域的高度仅为全高度减去刘海高度。在各种形状的刘海下刘海高度各不相同，有的刘海高度会等于状态栏高度，有的则不会，在此不一一列出。由于我们的可显示区域大小会随着刘海的高度发生变化，因此我们的某些设置就有可能会受到影响，例如我们有时会根据屏幕大小（即可显示区域大小）进行布局及某些dimen的指定，我们可能会有类似values-1440x720/dimen.xml，values-1344x720/dimen.xml这样的dimen设定方式，如果在代码中有类似的设计的话就需要注意了，刘海屏可能会对某些布局及显示大小造成影响。另外我们会发现状态栏的高度实际上是会发生变化的，变化数值各个刘海情况下不尽相同，但是如果在代码中有写死状态栏高度的情况，在有刘海的情况下也有可能出现问题，这一点也需要注意。</p>
+<p>&emsp;综上,对于有状态栏的界面来说，我们的适配工作实际上可能并不多，系统已经能够自适配大多数情况了，我们只需要针对性的调整一下我们做过某些特殊设定的部分即可。</p>
+<h3 id="全屏界面显示适配"><a href="#全屏界面显示适配" class="headerlink" title="全屏界面显示适配"></a>全屏界面显示适配</h3><p>&emsp;对于显示状态栏的界面，适配或许比较简单，但是对于全屏界面或许Google的设计就不会那么亲民了，在此前的代码中，我们加入如下代码将此界面改为全屏显示并且占据状态栏空间：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">requestWindowFeature(Window.FEATURE_NO_TITLE);</span><br><span class="line">getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN | View.SYSTEM_UI_FLAG_FULLSCREEN);</span><br><span class="line">getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);</span><br></pre></td></tr></table></figure>
+<p>&emsp;经过上面的操作如果我们不进行任何适配我们会发现界面的显示是下面这样的：</p>
+<p><img src="/2019/04/11/刘海屏适配/未适配全屏显示界面.png" alt="未适配的全屏显示界面"></p>
+<p>&emsp;如上图所示，当我们的全屏显示页面未进行任何适配时，系统会将应用界面做下移处理，避开危险区域，在安全区域显示我们原有的内容，且刘海区域会变成一条黑边，完全看不到刘海了。这种显示肯定不是我们期望的显示效果，那么我们该如何进行适配呢？接下下来我们就需要整理一下Android P新引入的支持全面屏的相关接口，我们可以利用这些新引入的接口进行刘海屏的适配。<br>&emsp;Android 9 支持最新的全面屏，其中包含为摄像头和扬声器预留空间的屏幕缺口。 通过<code>DisplayCutout</code>类可确定非功能区域的位置和形状，这些区域不应显示内容。 要确定这些屏幕缺口区域是否存在及其位置，请使用<code>getDisplayCutout()</code>函数。</p>
+<p>&emsp;全新的窗口布局属性 layoutInDisplayCutoutMode 让您的应用可以为设备屏幕缺口周围的内容进行布局。 您可以将此属性设为下列值之一：</p>
+<ul>
+<li>LAYOUT_IN_DISPLAY_CUTOUT_MODE_DEFAULT</li>
+<li>LAYOUT_IN_DISPLAY_CUTOUT_MODE_SHORT_EDGES</li>
+<li>LAYOUT_IN_DISPLAY_CUTOUT_MODE_NEVER</li>
+</ul>
+<p>&emsp;以上内容<a href="https://developer.android.google.cn/about/versions/pie/android-9.0#cutout" target="_blank" rel="noopener">点击此链接</a>可转至官方文档中查看，接下来我们先介绍一下上面提到的接口，然后再进行适配说明。首先我们来介绍一下新引入的DisplayCutout类及其提供的接口。</p>
+<h4 id="DisplayCutout类"><a href="#DisplayCutout类" class="headerlink" title="DisplayCutout类"></a>DisplayCutout类</h4><p>&emsp;此类表示不能展示内容的非功能区域部分，其实也就是我们所说的刘海部分，此类提供的常用的重要接口如下表：</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">方法</th>
+<th style="text-align:center">方法说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">List getBoundingRects()</td>
+<td style="text-align:center">返回Rects的列表，每个Rects都是显示屏上非功能区域的边界矩形</td>
+</tr>
+<tr>
+<td style="text-align:center">int getSafeInsetBottom()</td>
+<td style="text-align:center">以像素为单位，返回安全区域距离屏幕底部的距离</td>
+</tr>
+<tr>
+<td style="text-align:center">int getSafeInsetLeft()</td>
+<td style="text-align:center">以像素为单位，返回安全区域距离屏幕左边的距离</td>
+</tr>
+<tr>
+<td style="text-align:center">int getSafeInsetRight()</td>
+<td style="text-align:center">以像素为单位，返回安全区域距离屏幕右边的距离</td>
+</tr>
+<tr>
+<td style="text-align:center">int getSafeInsetTop()</td>
+<td style="text-align:center">以像素为单位，返回安全区域距离屏幕顶部的距离</td>
+</tr>
+<tr>
+<td style="text-align:center"></td>
+</tr>
+</tbody>
+</table>
+<p>&emsp;除上面的类外，还有布局新增的属性<code>layoutInDisplayCutoutMode</code>，它的属性值可以设为上面提到的三类，他们的含义分别如下：</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">属性取值</th>
+<th style="text-align:center">属性含义</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">int LAYOUT_IN_DISPLAY_CUTOUT_MODE_DEFAULT</td>
+<td style="text-align:center">此为默认值，只有当DisplayCutout完全包含在系统状态栏中时，才允许窗口延伸到DisplayCutout区域显示。</td>
+</tr>
+<tr>
+<td style="text-align:center">int LAYOUT_IN_DISPLAY_CUTOUT_MODE_NEVER</td>
+<td style="text-align:center">该窗口决不允许与DisplayCutout区域重叠。</td>
+</tr>
+<tr>
+<td style="text-align:center">int LAYOUT_IN_DISPLAY_CUTOUT_MODE_SHORT_EDGES</td>
+<td style="text-align:center">该窗口始终允许延伸到屏幕短边上的DisplayCutout区域。</td>
+</tr>
+<tr>
+<td style="text-align:center"></td>
+</tr>
+</tbody>
+</table>
+<p>&emsp;有了上面的这些接口我们对如何设置适配也基本有了实现方案，对于全屏显示的界面，我们想要消除那条黑边，即将我们的内容扩展到刘海所在的危险区域，我们可以在代码中加入<code>layoutInDisplayCutoutMode</code>的属性设置如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">WindowManager.LayoutParams lp = getWindow().getAttributes();</span><br><span class="line">lp.layoutInDisplayCutoutMode = WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_SHORT_EDGES;</span><br><span class="line">getWindow().setAttributes(lp);</span><br></pre></td></tr></table></figure>
+<p>&emsp;如此设置后我们的界面显示如下所示：</p>
+<p><img src="/2019/04/11/刘海屏适配/全屏显示及页面延伸.png" alt="全屏显示及页面延伸"></p>
+<p>&emsp;如上图所示，可以看到我们的界面已经变成了正真的全屏显示了，刘海区域也没有变成巨丑的黑边，但是这时我们会发现另一个问题，即我们需要展示给用户的页面内容被遮挡了，这就是我们的下一个适配内容了，我们需要动态的去判断刘海所在的位置，然后设置我们的控件位置，防止产生信息遮挡。示例代码如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line">mTextViewTop = findViewById(R.id.tv_top);</span><br><span class="line"></span><br><span class="line">getWindow().getDecorView().setOnApplyWindowInsetsListener(<span class="keyword">new</span> View.OnApplyWindowInsetsListener() &#123;</span><br><span class="line">    <span class="meta">@RequiresApi</span>(api = Build.VERSION_CODES.P)</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> WindowInsets <span class="title">onApplyWindowInsets</span><span class="params">(View view, WindowInsets windowInsets)</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">        WindowInsets rootWindowInsets = getWindow().getDecorView().getRootWindowInsets();</span><br><span class="line">        <span class="keyword">if</span> (rootWindowInsets != <span class="keyword">null</span>) &#123;</span><br><span class="line">            DisplayCutout displayCutout = rootWindowInsets.getDisplayCutout();</span><br><span class="line">            <span class="keyword">if</span> (displayCutout != <span class="keyword">null</span>) &#123;</span><br><span class="line">                <span class="keyword">if</span> (cutout != <span class="keyword">null</span> &amp;&amp; cutout.getBoundingRects() != <span class="keyword">null</span></span><br><span class="line">                        &amp;&amp; cutout.getBoundingRects().size() &gt; <span class="number">0</span>) &#123;</span><br><span class="line">                    <span class="keyword">if</span> (cutout.getSafeInsetTop() &gt; <span class="number">0</span>) &#123;</span><br><span class="line">                        RelativeLayout.LayoutParams layoutParams = (RelativeLayout.LayoutParams)mTextViewTop.getLayoutParams();</span><br><span class="line">                        layoutParams.topMargin = cutout.getSafeInsetTop();</span><br><span class="line">                        mTextViewTop.setLayoutParams(layoutParams);</span><br><span class="line">                    &#125;</span><br><span class="line">                    <span class="comment">// else if() ...</span></span><br><span class="line"></span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> getWindow().getDecorView().onApplyWindowInsets(windowInsets);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+<p>&emsp;上述代码中需要注意的是在得到windowInsets时我们要调用DecorView的<code>getRootWindowInsets()</code>函数来进行获取，如果直接使用传入的参数，在未设置lp的属性时得到的会是null，另外在return时需要调用decorView的<code>onApplyWindowInsets()</code>函数处理后返回，否则会使得导航栏透明，底部内容下沉并被导航栏遮挡。通过上述代码对我们的界面进行调整后，界面显示如下：</p>
+<p><img src="/2019/04/11/刘海屏适配/适配的全屏显示界面.png" alt="适配的全屏显示界面"></p>
+<p>&emsp;如上图所示，经过适配后我们界面的关键文本就避开了刘海的危险区域，实际上我们也可以根据状态栏的高度来避开屏幕上边的刘海区域，大部分情况下刘海都在屏幕上沿，且官方规定了刘海高度低于或等于状态栏高度，因此可以通过状态栏的高度来避免遮挡，但是胡子屏或者你就是想要在危险区域做些事的话，上面的代码可以让你根据自己的业务来进行各种定制，上面的代码仅列出了部分适配场景，其余的场景利用Google提供的接口均可以进行相应的定制，例如如果存在多刘海场景，就可以调用<code>getBoundingRects()</code>的到所有的刘海位置矩形框，遍历这些被占用位置进行自己的界面适配等。</p>
+<p>&emsp;除了全屏场景外，沉浸式状态栏实际上也是需要适配的场景，我们去除之前的全屏设置，并且去除之前将<code>layoutInDisplayCutoutMode设置为</code>LAYOUT_IN_DISPLAY_CUTOUT_MODE_SHORT_EDGES`的代码，如下设置沉浸式状态栏</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">getWindow().clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);</span><br><span class="line">getWindow().addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);</span><br><span class="line">getWindow().setStatusBarColor(Color.TRANSPARENT);</span><br><span class="line">getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN | View.SYSTEM_UI_FLAG_LAYOUT_STABLE);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 由于activity全屏并且背景为浅色，需要设置浅色标志使系统将状态栏图标等设置为深色</span></span><br><span class="line">getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN | View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR | View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR);</span><br></pre></td></tr></table></figure>
+<p>&emsp;设置完成后我们的界面显示如下所示：</p>
+<p><img src="/2019/04/11/刘海屏适配/沉浸式未适配.png" alt="沉浸式未适配"></p>
+<p>&emsp;如上图所示，我们设置沉浸式后界面显示即为图中的样式，我们发现这里并没有之前显示一个黑条的情况，在全屏显示不显示状态栏的时候，如果我们没有将<code>layoutInDisplayCutoutMode</code>设置为<code>LAYOUT_IN_DISPLAY_CUTOUT_MODE_SHORT_EDGES</code>，原生设计是会将界面下移并且显示一个黑条出来的，在沉浸式时却不会，这是为什么呢？还记得之前说到的<code>layoutInDisplayCutoutMode</code>得三种取值吗？其中有一个<code>LAYOUT_IN_DISPLAY_CUTOUT_MODE_DEFAULT</code>属性含义如下:<br>| 属性取值 | 属性含义 |<br>| :—: | :—: |<br>| int LAYOUT_IN_DISPLAY_CUTOUT_MODE_DEFAULT | 此为默认值，只有当DisplayCutout完全包含在系统状态栏中时，才允许窗口延伸到DisplayCutout区域显示。 |<br>|||<br>&emsp;之前我们对这个取值可能云里雾里，经过沉浸式状态栏的显示是不是有了一个较为清晰的认识，在沉浸式的界面显示下，默认值实际上就等同于我们此前在全屏显示情况下设置的<code>LAYOUT_IN_DISPLAY_CUTOUT_MODE_SHORT_EDGES</code>属性了，因此在沉浸式的情况下并不会出现上面的黑边，而是直接全屏延伸上去了。对于上面的界面我们也按照之前全屏界面的方法进行适配即可，效果如下：</p>
+<p><img src="/2019/04/11/刘海屏适配/沉浸式适配.png" alt="沉浸式适配"></p>
+<p>&emsp;如上我们就完成了相应的沉浸式界面的适配工作，以上就是利用Google提供的适配方案适配的全过程了,总结下来需要适配的场景主要集中在沉浸式状态栏及全屏显示的界面，本身就含有状态栏的界面实际上工作不多，仅需注意一些特殊场景即可。</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/UI适配，异型屏/" rel="tag"># UI适配，异型屏</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/04/11/上下拉反馈颜色定制/" rel="next" title="上下拉反馈颜色定制">
+                <i class="fa fa-chevron-left"></i> 上下拉反馈颜色定制
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="/images/小叮当.png" alt="LuckyHappyBear">
+            
+              <p class="site-author-name" itemprop="name">LuckyHappyBear</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">5</span>
+                  <span class="site-state-item-name">posts</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">2</span>
+                  <span class="site-state-item-name">categories</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">5</span>
+                  <span class="site-state-item-name">tags</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#水滴屏适配"><span class="nav-number">1.</span> <span class="nav-text">水滴屏适配</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#概述"><span class="nav-number">1.1.</span> <span class="nav-text">概述</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Android-P适配方案"><span class="nav-number">1.2.</span> <span class="nav-text">Android P适配方案</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#刘海屏布局"><span class="nav-number">1.2.1.</span> <span class="nav-text">刘海屏布局</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#显示状态栏的界面适配"><span class="nav-number">1.2.2.</span> <span class="nav-text">显示状态栏的界面适配</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#全屏界面显示适配"><span class="nav-number">1.2.3.</span> <span class="nav-text">全屏界面显示适配</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#DisplayCutout类"><span class="nav-number">1.2.3.1.</span> <span class="nav-text">DisplayCutout类</span></a></li></ol></li></ol></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">LuckyHappyBear</span>
+
+  
+</div>
+
+
+  <div class="powered-by">Powered by <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a></div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">Theme &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Pisces</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/canvas-nest/canvas-nest.min.js"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
