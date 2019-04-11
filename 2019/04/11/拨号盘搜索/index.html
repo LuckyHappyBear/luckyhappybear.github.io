@@ -1,0 +1,772 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-CN">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="通讯,">
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="拨号盘搜索流程概述　　我们知道拨号盘上输入数字是会触发搜索并将搜索结果展示在界面上的，整个搜索结果中既有按照号码搜索出来的结果，又有按照用户姓名搜索出来的，既有搜索出的通话记录，又有搜索出的联系人，那么这究竟是如何实现的呢？我们下面就来梳理下拨号盘的搜索流程。 按键点击到内容输入　　整个的拨号盘的搜索，必然是从用户点下拨号键盘上的某个键开始的，在电话的设计中，拨号盘上的每一个按键都是一个Dialp">
+<meta name="keywords" content="通讯">
+<meta property="og:type" content="article">
+<meta property="og:title" content="拨号盘搜索">
+<meta property="og:url" content="http://luckyhappybear.github.io/2019/04/11/拨号盘搜索/index.html">
+<meta property="og:site_name" content="大雄的博客">
+<meta property="og:description" content="拨号盘搜索流程概述　　我们知道拨号盘上输入数字是会触发搜索并将搜索结果展示在界面上的，整个搜索结果中既有按照号码搜索出来的结果，又有按照用户姓名搜索出来的，既有搜索出的通话记录，又有搜索出的联系人，那么这究竟是如何实现的呢？我们下面就来梳理下拨号盘的搜索流程。 按键点击到内容输入　　整个的拨号盘的搜索，必然是从用户点下拨号键盘上的某个键开始的，在电话的设计中，拨号盘上的每一个按键都是一个Dialp">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2019-04-11T14:57:18.444Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="拨号盘搜索">
+<meta name="twitter:description" content="拨号盘搜索流程概述　　我们知道拨号盘上输入数字是会触发搜索并将搜索结果展示在界面上的，整个搜索结果中既有按照号码搜索出来的结果，又有按照用户姓名搜索出来的，既有搜索出的通话记录，又有搜索出的联系人，那么这究竟是如何实现的呢？我们下面就来梳理下拨号盘的搜索流程。 按键点击到内容输入　　整个的拨号盘的搜索，必然是从用户点下拨号键盘上的某个键开始的，在电话的设计中，拨号盘上的每一个按键都是一个Dialp">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: 'Author'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://luckyhappybear.github.io/2019/04/11/拨号盘搜索/">
+
+
+
+
+
+  <title>拨号盘搜索 | 大雄的博客</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope="" itemtype="http://schema.org/WebPage" lang="zh-CN">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope="" itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">大雄的博客</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">持之以恒</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            Home
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br>
+            
+            About
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            Tags
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            Categories
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            Archives
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://luckyhappybear.github.io/2019/04/11/拨号盘搜索/">
+
+    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="LuckyHappyBear">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/小叮当.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="大雄的博客">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">拨号盘搜索</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2019-04-11T22:56:24+08:00">
+                2019-04-11
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing">
+                  <a href="/categories/Android/" itemprop="url" rel="index">
+                    <span itemprop="name">Android</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="拨号盘搜索流程"><a href="#拨号盘搜索流程" class="headerlink" title="拨号盘搜索流程"></a>拨号盘搜索流程</h1><h2 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h2><p>　　我们知道拨号盘上输入数字是会触发搜索并将搜索结果展示在界面上的，整个搜索结果中既有按照号码搜索出来的结果，又有按照用户姓名搜索出来的，既有搜索出的通话记录，又有搜索出的联系人，那么这究竟是如何实现的呢？我们下面就来梳理下拨号盘的搜索流程。</p>
+<h2 id="按键点击到内容输入"><a href="#按键点击到内容输入" class="headerlink" title="按键点击到内容输入"></a>按键点击到内容输入</h2><p>　　整个的拨号盘的搜索，必然是从用户点下拨号键盘上的某个键开始的，在电话的设计中，拨号盘上的每一个按键都是一个<code>DialpadKeyButton</code>，它是一个FrameLayout，由上面的数字及下面的字符两部分组成，对于2~9及0*#上下是两个TextView，对于1来说由于需要显示语音信箱的图标因此下半部分是一个ImageView，因此整个拨号盘点击能够输入的内容实际上是由12个<code>DialpadKeyButton</code>构成的，我们为<code>DialpadKeyButton</code>设置了<code>OnPressedListener</code>,当它的<code>setPressed()</code>被调用的时候会触发这个<code>listener</code>，这个<code>listener</code>的定义如下：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// DialpadKeyButton.java</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">OnPressedListener</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onPressed</span><span class="params">(View view, <span class="keyword">boolean</span> pressed)</span></span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>　　这个<code>listener</code>的调用在如下函数中：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// DialpadKeyButton.java</span></span><br><span class="line"><span class="meta">@Override</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setPressed</span><span class="params">(<span class="keyword">boolean</span> pressed)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">super</span>.setPressed(pressed);</span><br><span class="line">    <span class="keyword">if</span> (mOnPressedListener != <span class="keyword">null</span>) &#123;</span><br><span class="line">        mOnPressedListener.onPressed(<span class="keyword">this</span>, pressed);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>　　即每当<code>DialpadKeyButton</code>被点击时，这个回调就会被触发，那么这个监听是在何时设置的，<code>onPressed()</code>的实现又是在哪里呢？实际上他们都是在<code>DialpadFragment.java</code>中进行的，首先我们看看每个按键是如何设置监听的，如下所示：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// DialpadFragment.java</span></span><br><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">configureKeypadListeners</span><span class="params">(View fragmentView)</span> </span>&#123;</span><br><span class="line">        <span class="comment">// 按键的id数组，每个id代表一个按键</span></span><br><span class="line">        <span class="keyword">final</span> <span class="keyword">int</span>[] buttonIds = <span class="keyword">new</span> <span class="keyword">int</span>[]&#123;</span><br><span class="line">                R.id.one, R.id.two, R.id.three, R.id.four, R.id.five,</span><br><span class="line">                R.id.six, R.id.seven, R.id.eight, R.id.nine, R.id.star, R.id.zero, R.id.pound&#125;;</span><br><span class="line"></span><br><span class="line">        DialpadKeyButton dialpadKey;</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 循环为每个按键设置listener</span></span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; buttonIds.length; i++) &#123;</span><br><span class="line">            dialpadKey = (DialpadKeyButton) fragmentView.findViewById(buttonIds[i]);</span><br><span class="line">            dialpadKey.setOnPressedListener(<span class="keyword">this</span>);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">// 省略部分无关代码...</span></span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure></p>
+<p>　　接下来我们来看看<code>onPressed()</code>的实现，如下所示：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// DialpadFragment.java</span></span><br><span class="line"><span class="meta">@Override</span></span><br><span class="line">   <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onPressed</span><span class="params">(View view, <span class="keyword">boolean</span> pressed)</span> </span>&#123;</span><br><span class="line">       <span class="comment">// 省略部分非重点代码...</span></span><br><span class="line">       <span class="keyword">if</span> (pressed) &#123;</span><br><span class="line">           <span class="keyword">int</span> resId = view.getId();</span><br><span class="line">           <span class="keyword">if</span> (resId == R.id.one) &#123;</span><br><span class="line">               keyPressed(KeyEvent.KEYCODE_1);</span><br><span class="line">           &#125; <span class="keyword">else</span> <span class="keyword">if</span> (resId == R.id.two) &#123;</span><br><span class="line">               keyPressed(KeyEvent.KEYCODE_2);</span><br><span class="line">           &#125; <span class="keyword">else</span> <span class="keyword">if</span> (resId == R.id.three) &#123;</span><br><span class="line">               <span class="comment">// 省略相似代码...</span></span><br><span class="line">           &#125;</span><br><span class="line">           <span class="comment">// 省略之后相似代码...</span></span><br><span class="line">       &#125;</span><br><span class="line">       <span class="comment">// 省略部分非重点代码...</span></span><br><span class="line">   &#125;</span><br></pre></td></tr></table></figure></p>
+<p>　　接下来我们看看<code>keyPressed()</code>函数的实现，如下所示：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// DialpadFragment.java</span></span><br><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">keyPressed</span><span class="params">(<span class="keyword">int</span> keyCode)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (getView() == <span class="keyword">null</span> || getView().getTranslationY() != <span class="number">0</span>) &#123;</span><br><span class="line">        <span class="keyword">return</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">switch</span> (keyCode) &#123;</span><br><span class="line">        <span class="keyword">case</span> KeyEvent.KEYCODE_1:</span><br><span class="line">            playTone(ToneGenerator.TONE_DTMF_1, TONE_LENGTH_INFINITE);</span><br><span class="line">            <span class="keyword">break</span>;</span><br><span class="line">        <span class="keyword">case</span> KeyEvent.KEYCODE_2:</span><br><span class="line">            playTone(ToneGenerator.TONE_DTMF_2, TONE_LENGTH_INFINITE);</span><br><span class="line">            <span class="keyword">break</span>;</span><br><span class="line">        <span class="keyword">case</span> KeyEvent.KEYCODE_3:</span><br><span class="line">            playTone(ToneGenerator.TONE_DTMF_3, TONE_LENGTH_INFINITE);</span><br><span class="line">            <span class="keyword">break</span>;</span><br><span class="line">            <span class="comment">// 省略相似代码...</span></span><br><span class="line">        <span class="keyword">default</span>:</span><br><span class="line">            <span class="keyword">break</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    getView().performHapticFeedback(HapticFeedbackConstants.VIRTUAL_KEY);</span><br><span class="line">    KeyEvent event = <span class="keyword">new</span> KeyEvent(KeyEvent.ACTION_DOWN, keyCode);</span><br><span class="line">    mDigits.onKeyDown(keyCode, event);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>　　如上所示，在此函数中我们播放按键音，提供点击反馈，之后便将<code>keyCode</code>传递给mDigits，由其<code>onKeyDown()</code>函数进行处理，这里的mDigits对象实际上就是一个EditText，当我们将这些keyCode传递给它之后，实际上就相当于输入了1,2等内容，到此我们的按键点击处理及输入到编辑框的部分就分析完成了，之后就要进入真正的搜索过程中了，接下来的部分我们来进行搜索的部分。</p>
+<h2 id="搜索流程"><a href="#搜索流程" class="headerlink" title="搜索流程"></a>搜索流程</h2><p>　　分析完用户的点击及内容的输入，我们接下来开始跟踪应用是如何通过拨号盘的输入来搜索出相应的联系人及通话记录的，搜索开始的源头在于<code>DialpadFragment.java</code>实现的<code>afterTextChanged()</code>函数中，刚刚我们将<code>keyCode</code>传入了<code>mDigits</code>中，由于传递给<code>mDigits</code>是一个这里的<code>mDigits</code>对象实际上是一个<code>EditText</code>,由于我们为此编辑框设置了监听器如下：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mDigits.addTextChangedListener(<span class="keyword">this</span>);</span><br></pre></td></tr></table></figure></p>
+<p>　　因此在其内容改变后就会回调<code>afterTextChanged()</code>，我们来看看此函数的实现，如下所示：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// DialpadFragment.java</span></span><br><span class="line"><span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">afterTextChanged</span><span class="params">(Editable input)</span> </span>&#123;</span><br><span class="line">        <span class="comment">// When DTMF dialpad buttons are being pressed, we delay SpecialCharSequenceMgr sequence,</span></span><br><span class="line">        <span class="comment">// since some of SpecialCharSequenceMgr's behavior is too abrupt for the "touch-down"</span></span><br><span class="line">        <span class="comment">// behavior.</span></span><br><span class="line">        <span class="comment">//modify by zhouzejie</span></span><br><span class="line">        <span class="comment">// 处理暗码相关，如果输入的内容是预定的暗码，则进行暗码相关的操作</span></span><br><span class="line">        <span class="keyword">if</span> (!mDigitsFilledByIntent &amp;&amp;</span><br><span class="line">                SpecialCharSequenceMgr.handleCharsTPMobile(getActivity(), input.toString())) &#123;</span><br><span class="line">            <span class="comment">// A special sequence was entered, clear the digits</span></span><br><span class="line">            mDigits.getText().clear();</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> (isDigitsEmpty()) &#123;</span><br><span class="line">            mDigitsFilledByIntent = <span class="keyword">false</span>;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> (mDialpadQueryListener != <span class="keyword">null</span>) &#123;</span><br><span class="line">            <span class="comment">// 省略无关代码...</span></span><br><span class="line">            <span class="comment">// 回调query相关接口</span></span><br><span class="line">            mDialpadQueryListener.onDialpadQueryChanged(mDigits.getText().toString());</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 更新删除按钮状态</span></span><br><span class="line">        updateDeleteButtonEnabledState();</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure></p>
+<p>　　现在是不是已经十分接近啦？可以看到我们已经找到了搜索的入口，这里的<code>onDialpadQueryChanged()</code>调用即会将用户输入的内容传入并处理，此函数的实现如下：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// DialtactsActivity.java</span></span><br><span class="line"><span class="meta">@Override</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onDialpadQueryChanged</span><span class="params">(String query)</span> </span>&#123;</span><br><span class="line">    mDialpadQuery = query;</span><br><span class="line">    <span class="keyword">if</span> (mSmartDialSearchFragment != <span class="keyword">null</span>) &#123;</span><br><span class="line">        mSmartDialSearchFragment.setAddToContactNumber(query);</span><br><span class="line">    &#125;</span><br><span class="line">    mQuery = query; <span class="comment">// Add by ruanzhijie for 902 ROM feature</span></span><br><span class="line">    <span class="keyword">final</span> String normalizedQuery = SmartDialNameMatcher.normalizeNumber(query,</span><br><span class="line">            SmartDialNameMatcher.LATIN_SMART_DIAL_MAP);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// [yangmaosheng start]</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">// if normalizedQuery is null,don't enter search mode;</span></span><br><span class="line">    <span class="keyword">if</span>(TextUtils.isEmpty(normalizedQuery))&#123;</span><br><span class="line">        <span class="comment">//it is smart search mode,then exit search mode.</span></span><br><span class="line">        <span class="keyword">if</span>(mInDialpadSearch)&#123;</span><br><span class="line">            exitSearchUi(SMART_SEARCH_MODE,TextUtils.isEmpty(query));</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 若当前不处于搜索模式并且搜索字符串不为空，则进入搜索模式</span></span><br><span class="line">    <span class="keyword">if</span>(!mInDialpadSearch &amp;&amp; !TextUtils.isEmpty(normalizedQuery))&#123;</span><br><span class="line">        enterSearchUi(SMART_SEARCH_MODE, normalizedQuery, <span class="keyword">false</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (mSmartDialSearchFragment != <span class="keyword">null</span> &amp;&amp; mSmartDialSearchFragment.isVisible()) &#123;</span><br><span class="line">        mSmartDialSearchFragment.setQueryString(normalizedQuery, <span class="keyword">false</span> <span class="comment">/* delaySelection */</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// [yangmaosheng end]</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">// 省略无关代码...</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>　　如上所示，我们调用<code>setQueryString()</code>函数去设置搜索的字符串，我们继续往下看<code>setQueryString()</code>函数的实现：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setQueryString</span><span class="params">(String queryString, <span class="keyword">boolean</span> delaySelection)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (!TextUtils.equals(mQueryString, queryString)) &#123;</span><br><span class="line">        <span class="keyword">if</span> (mShowEmptyListForEmptyQuery &amp;&amp; mAdapter != <span class="keyword">null</span> &amp;&amp; mListView != <span class="keyword">null</span>) &#123;</span><br><span class="line">            <span class="keyword">if</span> (TextUtils.isEmpty(mQueryString)) &#123;</span><br><span class="line">                <span class="comment">// Restore the adapter if the query used to be empty.</span></span><br><span class="line">                mListView.setAdapter(mAdapter);</span><br><span class="line">            &#125; <span class="keyword">else</span> <span class="keyword">if</span> (TextUtils.isEmpty(queryString)) &#123;</span><br><span class="line">                <span class="comment">// Instantly clear the list view if the new query is empty.</span></span><br><span class="line">                mListView.setAdapter(<span class="keyword">null</span>);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        mQueryString = queryString;</span><br><span class="line">        setSearchMode(!TextUtils.isEmpty(mQueryString) || mShowEmptyListForEmptyQuery);</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> (mAdapter != <span class="keyword">null</span>) &#123;</span><br><span class="line">            mAdapter.setQueryString(queryString);</span><br><span class="line">            reloadData();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>　　如上所示，我们将<code>queryString</code>传入后实际上最后会走到<code>reloadData()</code>函数，此函数接下去会走<code>startLoading()</code>，在<code>startLoading()</code>函数中会根据情况调用<code>getLoaderManager().initLoader(i, null, this);</code>或者<code>getLoaderManager().restartLoader(partitionIndex, args, this);</code>,即最后会走到<code>loader</code>的加载流程中，即我们熟悉的<code>onCreateLoader()</code>–&gt;<code>loadInBackground()</code>–&gt;<code>onLoadFinished()</code>流程中,我们看看<code>SmartDialSearchFragment.java</code>中这些函数的定义:<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Override</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> Loader&lt;Cursor&gt; <span class="title">onCreateLoader</span><span class="params">(<span class="keyword">int</span> id, Bundle args)</span> </span>&#123;</span><br><span class="line">    <span class="comment">// Smart dialing does not support Directory Load, falls back to normal search instead.</span></span><br><span class="line">    <span class="keyword">if</span> (id == getDirectoryLoaderId()) &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">super</span>.onCreateLoader(id, args);</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="keyword">final</span> SmartDialNumberListAdapter adapter = (SmartDialNumberListAdapter) getAdapter();</span><br><span class="line">        <span class="comment">// 新建SmartDialCursorLoader，并进行configure</span></span><br><span class="line">        SmartDialCursorLoader loader = <span class="keyword">new</span> SmartDialCursorLoader(<span class="keyword">super</span>.getContext());</span><br><span class="line">        adapter.configureLoader(loader);</span><br><span class="line">        <span class="keyword">return</span> loader;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Override</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> Cursor <span class="title">loadInBackground</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (DEBUG) &#123;</span><br><span class="line">        Log.v(TAG, <span class="string">"Load in background "</span> + mQuery);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (!PermissionsUtil.hasContactsPermissions(mContext)) &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> MatrixCursor(PhoneQuery.PROJECTION_PRIMARY);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/** Loads results from the database helper. */</span></span><br><span class="line">    <span class="keyword">final</span> DialerDatabaseHelper dialerDatabaseHelper = DatabaseHelperManager.getDatabaseHelper(</span><br><span class="line">            mContext);</span><br><span class="line">    <span class="comment">// 此处查询联系人相关的内容</span></span><br><span class="line">    <span class="keyword">final</span> ArrayList&lt;ContactNumber&gt; allMatches = dialerDatabaseHelper.getLooseMatches(mQuery, mNameMatcher);</span><br><span class="line"></span><br><span class="line">    <span class="comment">/** Loads call logs from database. */</span></span><br><span class="line">    <span class="comment">// 此处查询通话记录相关的内容</span></span><br><span class="line">    String selection = CallLog.Calls.NUMBER + <span class="string">" like ? "</span>;</span><br><span class="line">    String[] selectionArgs = <span class="keyword">new</span> String[]&#123;<span class="string">"%"</span> + mQuery + <span class="string">"%"</span>&#125;;</span><br><span class="line">    <span class="keyword">if</span> (! PermissionsUtil.hasPhonePermissions(getContext())) &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">null</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    Cursor callLogCursor = getContext().getContentResolver().query(</span><br><span class="line">            CallLog.Calls.CONTENT_URI, CallLogQuery._PROJECTION,</span><br><span class="line">            selection, selectionArgs, CallLog.Calls.DATE + <span class="string">" desc"</span>);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (DEBUG) &#123;</span><br><span class="line">        Log.v(TAG, <span class="string">"Loaded matches "</span> + String.valueOf(allMatches.size()));</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/** Merge call log cursor and contact cursor */</span></span><br><span class="line">    <span class="comment">// ...省略merge的相关内容...</span></span><br><span class="line">    <span class="keyword">return</span> cursor;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>　　经过查找，找到联系人相关部分，与通话记录相关部分，经过去重后返回，最后便形成了拨号盘搜索的结果集合，然后在<code>onLoadFinished()</code>函数中调用<code>changeCursor()</code>–&gt;<code>notifyDataSetChanged()</code>，之后便会触发数据的刷新及绑定<code>View</code>的操作，自此，整个的搜索流程就进行完毕了。</p>
+<h2 id="拨号盘的联系人搜索"><a href="#拨号盘的联系人搜索" class="headerlink" title="拨号盘的联系人搜索"></a>拨号盘的联系人搜索</h2><p>　　经过上面的流程梳理想必大家对拨号盘的整个搜索流程已经有了一个较为清晰的认识，那么，拨号盘究竟是如何通过普通的数字搜索出对应姓名的联系人的呢？接下来我们便对这部分内容进行跟踪梳理。<br>　　我们在上面的搜索流程中其实提到了联系人搜索部分，但是仅仅是提及而已，并没有进行深入的分析，我们先来看看拨号盘的联系人搜索的入口如下：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">dialerDatabaseHelper.getLooseMatches(mQuery, mNameMatcher);</span><br></pre></td></tr></table></figure></p>
+<p>　　继续跟踪，我们接下来继续查看<code>getLooseMatches()</code>函数的定义如下：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> ArrayList&lt;ContactNumber&gt;  <span class="title">getLooseMatches</span><span class="params">(String query,</span></span></span><br><span class="line"><span class="function"><span class="params">            SmartDialNameMatcher nameMatcher)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">synchronized</span> (mLock) &#123;</span><br><span class="line">            <span class="comment">// 省略无关代码...</span></span><br><span class="line"></span><br><span class="line">            <span class="keyword">final</span> SQLiteDatabase db = getReadableDatabase();</span><br><span class="line"></span><br><span class="line">            <span class="comment">/** 由 query% 改成 %query%，为了适应UE的中间匹配需求*/</span></span><br><span class="line">            <span class="comment">/** by chenshiwen **/</span></span><br><span class="line">            <span class="keyword">final</span> String looseQuery = <span class="string">"%"</span> + query + <span class="string">"%"</span>;</span><br><span class="line"></span><br><span class="line">            <span class="keyword">final</span> ArrayList&lt;ContactNumber&gt; result = Lists.newArrayList();</span><br><span class="line"></span><br><span class="line">            <span class="comment">// 省略无关代码...</span></span><br><span class="line"></span><br><span class="line">            <span class="comment">/** Queries the database to find contacts that have an index matching the query prefix. */</span></span><br><span class="line">            <span class="keyword">final</span> Cursor cursor = db.rawQuery(<span class="string">"SELECT "</span> +</span><br><span class="line">                            SmartDialDbColumns.DATA_ID + <span class="string">", "</span> +</span><br><span class="line">                            SmartDialDbColumns.DISPLAY_NAME_PRIMARY + <span class="string">", "</span> +</span><br><span class="line">                            SmartDialDbColumns.PHOTO_ID + <span class="string">", "</span> +</span><br><span class="line">                            SmartDialDbColumns.NUMBER + <span class="string">", "</span> +</span><br><span class="line">                            SmartDialDbColumns.CONTACT_ID + <span class="string">", "</span> +</span><br><span class="line">                            SmartDialDbColumns.LOOKUP_KEY + <span class="string">", "</span> +</span><br><span class="line">                            SmartDialDbColumns.CARRIER_PRESENCE +</span><br><span class="line">                            <span class="string">" FROM "</span> + Tables.SMARTDIAL_TABLE + <span class="string">" WHERE "</span> +</span><br><span class="line">                            SmartDialDbColumns.CONTACT_ID + <span class="string">" IN "</span> +</span><br><span class="line">                            <span class="string">" (SELECT "</span> + PrefixColumns.CONTACT_ID +</span><br><span class="line">                            <span class="string">" FROM "</span> + Tables.PREFIX_TABLE +</span><br><span class="line">                            <span class="string">" WHERE "</span> + Tables.PREFIX_TABLE + <span class="string">"."</span> + PrefixColumns.PREFIX +</span><br><span class="line">                            <span class="string">" LIKE '"</span> + looseQuery + <span class="string">"')"</span> +</span><br><span class="line">                            <span class="string">" ORDER BY "</span> + SmartDialSortingOrder.SORT_ORDER,</span><br><span class="line">                    <span class="keyword">new</span> String[] &#123;currentTimeStamp&#125;);</span><br><span class="line">            <span class="keyword">if</span> (cursor == <span class="keyword">null</span>) &#123;</span><br><span class="line">                <span class="keyword">return</span> result;</span><br><span class="line">            &#125;</span><br><span class="line">          　<span class="comment">// 省略去重等相关结果集操作，我们主要关注查询过程</span></span><br><span class="line">            <span class="keyword">return</span> result;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure></p>
+<p>　　可以看到，这个函数的关键就在这个<code>rawQuery()</code>函数中，查询语句中联结了两张表，一个是<code>smartdial_table</code>表，一个是<code>prefix_table</code>表，首先在<code>prefix_table</code>表中用<code>like</code>通配符找到<code>prefix</code>表项中含<code>query</code>字符串的条目，找到后再根据<code>contact_id</code>在<code>smartdial_table</code>中找到<code>displayname</code>，<code>photoId</code>等联系人相关信息，这说明我们的所有相关信息实际上是存在这两张表中的，那么这两张表又是如何创建并填充相关信息的呢？我们继续跟踪，这两张表的内容插入实际上是在<code>DialerDatabaseHelper.java</code>的<code>updateSmartDialDatabaseMTK()</code>函数中进行的，这个函数实际上是我们后来为适配MTK平台自己新增的函数，它的原型应该是<code>updateSmartDialDatabaseGoogle()</code>函数。我们来看看这个函数的定义如下：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">updateSmartDialDatabaseMTK</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">final</span> SQLiteDatabase db = getWritableDatabase();</span><br><span class="line"></span><br><span class="line">    <span class="keyword">synchronized</span>(mLock) &#123;</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 省略非重点代码...</span></span><br><span class="line">        <span class="comment">/** Gets the last update time on the database. */</span></span><br><span class="line">        <span class="keyword">final</span> SharedPreferences databaseLastUpdateSharedPref = mContext.getSharedPreferences(</span><br><span class="line">                DATABASE_LAST_CREATED_SHARED_PREF, Context.MODE_PRIVATE);</span><br><span class="line">        <span class="keyword">final</span> String lastUpdateMillis = String.valueOf(</span><br><span class="line">                databaseLastUpdateSharedPref.getLong(LAST_UPDATED_MILLIS, <span class="number">0</span>));</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> (DEBUG) &#123;</span><br><span class="line">            Log.v(TAG, <span class="string">"Last updated at "</span> + lastUpdateMillis);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="comment">/** Sets the time after querying the database as the current update time. */</span></span><br><span class="line">        <span class="keyword">final</span> Long currentMillis = System.currentTimeMillis();</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 省略非重点代码...</span></span><br><span class="line">        <span class="comment">/// M: Handle the time is set to the past.</span></span><br><span class="line">        <span class="keyword">final</span> Cursor updatedPhoneCursor = getUpdatedContactCursor(</span><br><span class="line">                lastUpdateMillis, currentMillis);</span><br><span class="line">        <span class="keyword">if</span> (updatedPhoneCursor == <span class="keyword">null</span>) &#123;</span><br><span class="line">            Log.e(TAG, <span class="string">"SmartDial query received null for cursor"</span>);</span><br><span class="line">            <span class="keyword">return</span>;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            <span class="comment">// 将相应内容插入smartdial_table表中</span></span><br><span class="line">            insertUpdatedContactsAndNumberPrefix(db, updatedPhoneCursor, currentMillis);</span><br><span class="line">            <span class="keyword">if</span> (DEBUG) &#123;</span><br><span class="line">                stopWatch.lap(<span class="string">"Finished building the smart dial table"</span>);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125; <span class="keyword">finally</span> &#123;</span><br><span class="line">            updatedPhoneCursor.close();</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 将相应内容插入prefix_table表中</span></span><br><span class="line">        <span class="keyword">final</span> Cursor nameCursor = db.rawQuery(</span><br><span class="line">                <span class="string">"SELECT DISTINCT "</span> +</span><br><span class="line">                        <span class="comment">/// M: Google Code</span></span><br><span class="line">                        <span class="comment">//SmartDialDbColumns.DISPLAY_NAME_PRIMARY + ","+ SmartDialDbColumns.CONTACT_ID +</span></span><br><span class="line">                        <span class="comment">/// M: Use normalizedName instead of displayName</span></span><br><span class="line">                        <span class="comment">/// [chenshiwen start] use the displayName</span></span><br><span class="line">                        SmartDialDbColumns.DISPLAY_NAME_PRIMARY + <span class="string">", "</span> + SmartDialDbColumns.CONTACT_ID +</span><br><span class="line">                        <span class="comment">/// [chenshiwen end]</span></span><br><span class="line">                        <span class="string">" FROM "</span> + Tables.SMARTDIAL_TABLE +</span><br><span class="line">                        <span class="string">" WHERE "</span> + SmartDialDbColumns.LAST_SMARTDIAL_UPDATE_TIME +</span><br><span class="line">                        <span class="string">" = "</span> + Long.toString(currentMillis),</span><br><span class="line">                <span class="keyword">new</span> String[]&#123;&#125;);</span><br><span class="line">        <span class="keyword">if</span> (nameCursor != <span class="keyword">null</span>) &#123;</span><br><span class="line">            <span class="keyword">try</span> &#123;</span><br><span class="line">                <span class="keyword">if</span> (DEBUG) &#123;</span><br><span class="line">                    stopWatch.lap(<span class="string">"Queried the smart dial table for contact names"</span>);</span><br><span class="line">                &#125;</span><br><span class="line"></span><br><span class="line">                <span class="comment">/** Inserts prefixes of names into the prefix table.*/</span></span><br><span class="line">                insertNamePrefixes(db, nameCursor);</span><br><span class="line">                <span class="keyword">if</span> (DEBUG) &#123;</span><br><span class="line">                    stopWatch.lap(<span class="string">"Finished building the name prefix table"</span>);</span><br><span class="line">                &#125;</span><br><span class="line">            &#125; <span class="keyword">finally</span> &#123;</span><br><span class="line">                nameCursor.close();</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 省略非重点代码...</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>　　对于<code>insertUpdatedContactsAndNumberPrefix()</code>函数实际上是将从联系人数据库中查出的必要内容如联系人姓名，联系人号码等一一填充到<code>smartdial_table</code>表中，最后会将号码及contact_id填入<code>prefix_table</code>表，函数定义如下：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">insertUpdatedContactsAndNumberPrefix</span><span class="params">(SQLiteDatabase db,</span></span></span><br><span class="line"><span class="function"><span class="params">            Cursor updatedContactCursor, Long currentMillis)</span> </span>&#123;</span><br><span class="line">        db.beginTransaction();</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            <span class="comment">// 省略smartdial_table表项的填充操作...</span></span><br><span class="line">            <span class="keyword">while</span> (updatedContactCursor.moveToNext()) &#123;</span><br><span class="line">              <span class="comment">// 省略smartdial_table表项的填充操作...</span></span><br><span class="line">                <span class="keyword">final</span> String contactPhoneNumber =</span><br><span class="line">                        updatedContactCursor.getString(PhoneQuery.PHONE_NUMBER);</span><br><span class="line">                <span class="keyword">final</span> ArrayList&lt;String&gt; numberPrefixes =</span><br><span class="line">                        SmartDialPrefix.parseToNumberTokens(contactPhoneNumber);</span><br><span class="line"></span><br><span class="line">                <span class="keyword">for</span> (String numberPrefix : numberPrefixes) &#123;</span><br><span class="line">                    numberInsert.bindLong(<span class="number">1</span>, updatedContactCursor.getLong(</span><br><span class="line">                            PhoneQuery.PHONE_CONTACT_ID));</span><br><span class="line">                    numberInsert.bindString(<span class="number">2</span>, numberPrefix);</span><br><span class="line">                    numberInsert.executeInsert();</span><br><span class="line">                    numberInsert.clearBindings();</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">            db.setTransactionSuccessful();</span><br><span class="line">        &#125; <span class="keyword">catch</span> (Exception e)&#123;</span><br><span class="line">            android.util.Log.e(TAG,<span class="string">"insertUpdatedContactsAndNumberPrefix error: "</span>+e.toString());</span><br><span class="line">        &#125;<span class="keyword">finally</span> &#123;</span><br><span class="line">            db.endTransaction();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure></p>
+<p>　　如上所示，对于<code>smartdial_table</code>表的填充操作，我们就不在多说，仅仅是在联系人数据库中查找到所需内容，然后进行填充即可，这里需要注意的一点是，在联系人数据库中查找时仅会查找含有号码的联系人（因为传入的<code>uri</code>为<code>Phone.CONTENT_URI</code>）。除此之外，还会将号码及对应的contact_id写入<code>prefix_table</code>表，这样查询时就能根据号码查询到对应的联系人了。<br>　　接下来再看看<code>insertNamePrefixes()</code>函数，这个函数会将联系人的姓名转换成拨号盘上的数字序列，例如aaaa的联系人，最后会转换成2222存在数据库中，这样一来，用户输入2、22、222、2222都能找到aaaa这个联系人，它的定义如下所示：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">insertNamePrefixes</span><span class="params">(SQLiteDatabase db, Cursor nameCursor)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">final</span> <span class="keyword">int</span> columnIndexName = nameCursor.getColumnIndex(</span><br><span class="line">            SmartDialDbColumns.DISPLAY_NAME_PRIMARY);</span><br><span class="line">    <span class="keyword">final</span> <span class="keyword">int</span> columnIndexContactId = nameCursor.getColumnIndex(SmartDialDbColumns.CONTACT_ID);</span><br><span class="line"></span><br><span class="line">    db.beginTransaction();</span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">        <span class="keyword">final</span> String sqlInsert = <span class="string">"INSERT INTO "</span> + Tables.PREFIX_TABLE + <span class="string">" ("</span> +</span><br><span class="line">                PrefixColumns.CONTACT_ID + <span class="string">", "</span> +</span><br><span class="line">                PrefixColumns.PREFIX  + <span class="string">") "</span> +</span><br><span class="line">                <span class="string">" VALUES (?, ?)"</span>;</span><br><span class="line">        <span class="keyword">final</span> SQLiteStatement insert = db.compileStatement(sqlInsert);</span><br><span class="line"></span><br><span class="line">        <span class="keyword">while</span> (nameCursor.moveToNext()) &#123;</span><br><span class="line">            <span class="comment">/** Computes a list of prefixes of a given contact name. */</span></span><br><span class="line">            <span class="keyword">final</span> ArrayList&lt;String&gt; namePrefixes =</span><br><span class="line">                    SmartDialPrefix.generateNamePrefixes(nameCursor.getString(columnIndexName));</span><br><span class="line"></span><br><span class="line">            <span class="keyword">for</span> (String namePrefix : namePrefixes) &#123;</span><br><span class="line">                insert.bindLong(<span class="number">1</span>, nameCursor.getLong(columnIndexContactId));</span><br><span class="line">                insert.bindString(<span class="number">2</span>, namePrefix);</span><br><span class="line">                insert.executeInsert();</span><br><span class="line">                insert.clearBindings();</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        db.setTransactionSuccessful();</span><br><span class="line">    &#125; <span class="keyword">finally</span> &#123;</span><br><span class="line">        db.endTransaction();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>　　可以看到会进行循环遍历的插入操作，具体的将姓名转换为对应的数字串的操作实际上是由<code>generateNamePrefixes()</code>进行的，我们接着来看这个函数的定义如下：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// SmartDialPrefix.java</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> ArrayList&lt;String&gt; <span class="title">generateNamePrefixes</span><span class="params">(String index)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">final</span> ArrayList&lt;String&gt; result = Lists.newArrayList();</span><br><span class="line"></span><br><span class="line">        <span class="comment">/** Parses the name into a list of tokens.*/</span></span><br><span class="line">        <span class="keyword">final</span> ArrayList&lt;String&gt; indexTokens = parseToIndexTokens(index);</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> (indexTokens.size() &gt; <span class="number">0</span>) &#123;</span><br><span class="line">            <span class="comment">/** Adds the full token combinations to the list. For example, a contact with name</span></span><br><span class="line"><span class="comment">             * "Albert Ben Ed Foster" can be looked up by any prefix of the following strings</span></span><br><span class="line"><span class="comment">             * "Foster" "EdFoster" "BenEdFoster" and "AlbertBenEdFoster". This covers all cases of</span></span><br><span class="line"><span class="comment">             * look up that contains only one token, and that spans multiple continuous tokens.</span></span><br><span class="line"><span class="comment">             */</span></span><br><span class="line">            <span class="keyword">final</span> StringBuilder fullNameToken = <span class="keyword">new</span> StringBuilder();</span><br><span class="line">            <span class="keyword">for</span> (<span class="keyword">int</span> i = indexTokens.size() - <span class="number">1</span>; i &gt;= <span class="number">0</span>; i--) &#123;</span><br><span class="line">                fullNameToken.insert(<span class="number">0</span>, indexTokens.get(i));</span><br><span class="line">                result.add(fullNameToken.toString());</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            <span class="comment">/** Adds initial combinations to the list, with the number of initials restricted by</span></span><br><span class="line"><span class="comment">             * &#123;<span class="doctag">@link</span> #LAST_TOKENS_FOR_INITIALS&#125; and &#123;<span class="doctag">@link</span> #FIRST_TOKENS_FOR_INITIALS&#125;.</span></span><br><span class="line"><span class="comment">             * For example, a contact with name "Albert Ben Ed Foster" can be looked up by any</span></span><br><span class="line"><span class="comment">             * prefix of the following strings "EFoster" "BFoster" "BEFoster" "AFoster" "ABFoster"</span></span><br><span class="line"><span class="comment">             * "AEFoster" and "ABEFoster". This covers all cases of initial lookup.</span></span><br><span class="line"><span class="comment">             */</span></span><br><span class="line">            ArrayList&lt;String&gt; fullNames = Lists.newArrayList();</span><br><span class="line">            fullNames.add(indexTokens.get(indexTokens.size() - <span class="number">1</span>));</span><br><span class="line">            <span class="keyword">final</span> <span class="keyword">int</span> recursiveNameStart = result.size();</span><br><span class="line">            <span class="keyword">int</span> recursiveNameEnd = result.size();</span><br><span class="line">            String initial = <span class="string">""</span>;</span><br><span class="line">            <span class="keyword">for</span> (<span class="keyword">int</span> i = indexTokens.size() - <span class="number">2</span>; i &gt;= <span class="number">0</span>; i--) &#123;</span><br><span class="line">                <span class="keyword">if</span> ((i &gt;= indexTokens.size() - LAST_TOKENS_FOR_INITIALS) ||</span><br><span class="line">                        (i &lt; FIRST_TOKENS_FOR_INITIALS)) &#123;</span><br><span class="line">                    initial = indexTokens.get(i).substring(<span class="number">0</span>, <span class="number">1</span>);</span><br><span class="line"></span><br><span class="line">                    <span class="comment">/** Recursively adds initial combinations to the list.*/</span></span><br><span class="line">                    <span class="keyword">for</span> (<span class="keyword">int</span> j = <span class="number">0</span>; j &lt; fullNames.size(); ++j) &#123;</span><br><span class="line">                        result.add(initial + fullNames.get(j));</span><br><span class="line">                    &#125;</span><br><span class="line">                    <span class="keyword">for</span> (<span class="keyword">int</span> j = recursiveNameStart; j &lt; recursiveNameEnd; ++j) &#123;</span><br><span class="line">                       result.add(initial + result.get(j));</span><br><span class="line">                    &#125;</span><br><span class="line">                    recursiveNameEnd = result.size();</span><br><span class="line">                    <span class="keyword">final</span> String currentFullName = fullNames.get(fullNames.size() - <span class="number">1</span>);</span><br><span class="line">                    fullNames.add(indexTokens.get(i) +  currentFullName);</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> result;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure></p>
+<p>　　如上所示，首先会调用<code>parseToIndexTokens()</code>函数对姓名进行处理，返回一个String列表，之后会对这个列表进行一系列的操作，我们先看看<code>parseToIndexTokens()</code>函数的实现，如下所示：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> ArrayList&lt;String&gt; <span class="title">parseToIndexTokens</span><span class="params">(String contactName)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">final</span> <span class="keyword">int</span> length = contactName.length();</span><br><span class="line">    <span class="keyword">final</span> ArrayList&lt;String&gt; result = Lists.newArrayList();</span><br><span class="line">    <span class="keyword">char</span> c;</span><br><span class="line">    <span class="keyword">final</span> StringBuilder currentIndexToken = <span class="keyword">new</span> StringBuilder();</span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * Iterates through the whole name string. If the current character is a valid character,</span></span><br><span class="line"><span class="comment">     * append it to the current token. If the current character is not a valid character, for</span></span><br><span class="line"><span class="comment">     * example space " ", mark the current token as complete and add it to the list of tokens.</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; length; i++) &#123;</span><br><span class="line">        c = mMap.normalizeCharacter(contactName.charAt(i));</span><br><span class="line">        <span class="keyword">if</span> (mMap.isValidDialpadCharacter(c)) &#123;</span><br><span class="line">            <span class="comment">/** Converts a character into the number on dialpad that represents the character.*/</span></span><br><span class="line">            currentIndexToken.append(mMap.getDialpadIndex(c));</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="keyword">if</span> (currentIndexToken.length() != <span class="number">0</span>) &#123;</span><br><span class="line">                result.add(currentIndexToken.toString());</span><br><span class="line">            &#125;</span><br><span class="line">            currentIndexToken.delete(<span class="number">0</span>, currentIndexToken.length());</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/** Adds the last token in case it has not been added.*/</span></span><br><span class="line">    <span class="keyword">if</span> (currentIndexToken.length() != <span class="number">0</span>) &#123;</span><br><span class="line">        result.add(currentIndexToken.toString());</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> result;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>　　如上所示，会对姓名进行遍历处理，首先会调用<code>mMap.normalizeCharacter(contactName.charAt(i));</code>来对当前位置的字符进行格式化，此函数的定义如下所示：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// LatinSmartDialMap.java,此处为何使用这个类中的规范化函数呢？是由于在SmartDialPrefix.java中是用此类进行的对象初始化</span></span><br><span class="line"><span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">char</span> <span class="title">normalizeCharacter</span><span class="params">(<span class="keyword">char</span> ch)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">switch</span> (ch) &#123;</span><br><span class="line">            <span class="keyword">case</span> <span class="string">'À'</span>: <span class="keyword">return</span> <span class="string">'a'</span>;</span><br><span class="line">            <span class="keyword">case</span> <span class="string">'Á'</span>: <span class="keyword">return</span> <span class="string">'a'</span>;</span><br><span class="line">            <span class="keyword">case</span> <span class="string">'Â'</span>: <span class="keyword">return</span> <span class="string">'a'</span>;</span><br><span class="line">            <span class="keyword">case</span> <span class="string">'Ã'</span>: <span class="keyword">return</span> <span class="string">'a'</span>;</span><br><span class="line">            <span class="keyword">case</span> <span class="string">'Ä'</span>: <span class="keyword">return</span> <span class="string">'a'</span>;</span><br><span class="line">            <span class="keyword">case</span> <span class="string">'Å'</span>: <span class="keyword">return</span> <span class="string">'a'</span>;</span><br><span class="line">            <span class="keyword">case</span> <span class="string">'Ç'</span>: <span class="keyword">return</span> <span class="string">'c'</span>;</span><br><span class="line">            <span class="keyword">case</span> <span class="string">'È'</span>: <span class="keyword">return</span> <span class="string">'e'</span>;</span><br><span class="line">            <span class="keyword">case</span> <span class="string">'É'</span>: <span class="keyword">return</span> <span class="string">'e'</span>;</span><br><span class="line">            <span class="keyword">case</span> <span class="string">'Ê'</span>: <span class="keyword">return</span> <span class="string">'e'</span>;</span><br><span class="line">            <span class="keyword">case</span> <span class="string">'Ë'</span>: <span class="keyword">return</span> <span class="string">'e'</span>;</span><br><span class="line">            <span class="comment">// 省略类似转换...</span></span><br><span class="line">            <span class="keyword">default</span>:</span><br><span class="line">                <span class="keyword">return</span> ch;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure></p>
+<p>　　可以看到，这里实际上是将名字中的字符转换为a-z的26个标准英文字符，转换完成后判断其是否为合法的拨号盘字符，这个函数中仅认为a-z及0-9合法，若合法的话将使用<code>getDialpadIndex()</code>函数转换后的字符<code>append</code>到<code>currentIndexToken</code>对象当中，看看<code>getDialpadIndex()</code>函数的定义如下所示：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Override</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">byte</span> <span class="title">getDialpadIndex</span><span class="params">(<span class="keyword">char</span> ch)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (ch &gt;= <span class="string">'0'</span> &amp;&amp; ch &lt;= <span class="string">'9'</span>) &#123;</span><br><span class="line">        <span class="keyword">return</span> (<span class="keyword">byte</span>) (ch - <span class="string">'0'</span>);</span><br><span class="line">    &#125; <span class="keyword">else</span> <span class="keyword">if</span> (ch &gt;= <span class="string">'a'</span> &amp;&amp; ch &lt;= <span class="string">'z'</span>) &#123;</span><br><span class="line">        <span class="keyword">return</span> (<span class="keyword">byte</span>) (LATIN_LETTERS_TO_DIGITS[ch - <span class="string">'a'</span>] - <span class="string">'0'</span>);</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> -<span class="number">1</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>　　若为数字，返回对应的0-9，若为字符，则使用<code>LATIN_LETTERS_TO_DIGITS</code>数组映射为对应的0-9，看看这个映射数组的定义如下所示：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">char</span>[] LATIN_LETTERS_TO_DIGITS = &#123;</span><br><span class="line">    <span class="string">'2'</span>, <span class="string">'2'</span>, <span class="string">'2'</span>, <span class="comment">// A,B,C -&gt; 2</span></span><br><span class="line">    <span class="string">'3'</span>, <span class="string">'3'</span>, <span class="string">'3'</span>, <span class="comment">// D,E,F -&gt; 3</span></span><br><span class="line">    <span class="string">'4'</span>, <span class="string">'4'</span>, <span class="string">'4'</span>, <span class="comment">// G,H,I -&gt; 4</span></span><br><span class="line">    <span class="string">'5'</span>, <span class="string">'5'</span>, <span class="string">'5'</span>, <span class="comment">// J,K,L -&gt; 5</span></span><br><span class="line">    <span class="string">'6'</span>, <span class="string">'6'</span>, <span class="string">'6'</span>, <span class="comment">// M,N,O -&gt; 6</span></span><br><span class="line">    <span class="string">'7'</span>, <span class="string">'7'</span>, <span class="string">'7'</span>, <span class="string">'7'</span>, <span class="comment">// P,Q,R,S -&gt; 7</span></span><br><span class="line">    <span class="string">'8'</span>, <span class="string">'8'</span>, <span class="string">'8'</span>, <span class="comment">// T,U,V -&gt; 8</span></span><br><span class="line">    <span class="string">'9'</span>, <span class="string">'9'</span>, <span class="string">'9'</span>, <span class="string">'9'</span> <span class="comment">// W,X,Y,Z -&gt; 9</span></span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure></p>
+<p>　可以看到这里实际上就是数字与字母的对应关系了，而在表中，我们的姓名会按位转换为数字进行存储，举个例子，如果一个人的姓名为<code>Saggy Thick</code>，经过<code>parseToIndexTokens()</code>函数转化后会形成一个<code>list</code>，其中存储的是<code>84425</code>,<code>784425</code>及<code>7244984425</code>，<code>7244984425</code>代表的就是这个名字的全串，<code>84425</code>代表的则是<code>Thick</code>, <code>784425</code>代表的就为<code>SThick</code>，即姓氏的首字母及名的全称，这样就可以保证搜索到这个联系人了，生成这些串之后，就会存入<code>prefix_table</code>表中，这就是搜索的数据源，结合我们前面讲的搜索流程，整个的拨号盘搜索的数据来源及搜索流程就梳理完成了。</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/通讯/" rel="tag"># 通讯</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/04/11/刘海屏适配/" rel="next" title="刘海屏适配">
+                <i class="fa fa-chevron-left"></i> 刘海屏适配
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="/images/小叮当.png" alt="LuckyHappyBear">
+            
+              <p class="site-author-name" itemprop="name">LuckyHappyBear</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">6</span>
+                  <span class="site-state-item-name">posts</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">2</span>
+                  <span class="site-state-item-name">categories</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">6</span>
+                  <span class="site-state-item-name">tags</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#拨号盘搜索流程"><span class="nav-number">1.</span> <span class="nav-text">拨号盘搜索流程</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#概述"><span class="nav-number">1.1.</span> <span class="nav-text">概述</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#按键点击到内容输入"><span class="nav-number">1.2.</span> <span class="nav-text">按键点击到内容输入</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#搜索流程"><span class="nav-number">1.3.</span> <span class="nav-text">搜索流程</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#拨号盘的联系人搜索"><span class="nav-number">1.4.</span> <span class="nav-text">拨号盘的联系人搜索</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">LuckyHappyBear</span>
+
+  
+</div>
+
+
+  <div class="powered-by">Powered by <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a></div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">Theme &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Pisces</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/canvas-nest/canvas-nest.min.js"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
