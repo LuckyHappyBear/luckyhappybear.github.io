@@ -94,7 +94,7 @@
 <meta property="og:image" content="http://luckyhappybear.github.io/2019/04/11/刘海屏适配/适配的全屏显示界面.png">
 <meta property="og:image" content="http://luckyhappybear.github.io/2019/04/11/刘海屏适配/沉浸式未适配.png">
 <meta property="og:image" content="http://luckyhappybear.github.io/2019/04/11/刘海屏适配/沉浸式适配.png">
-<meta property="og:updated_time" content="2019-04-11T14:45:38.233Z">
+<meta property="og:updated_time" content="2019-04-11T14:50:14.674Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="刘海屏适配">
 <meta name="twitter:description" content="水滴屏适配概述&amp;emsp;随着高屏占比机型越来越受欢迎，各个手机厂商绞尽脑汁的扩展屏幕大小，在此背景下，刘海屏营运而生，在Google还未进行系统级支持之前，各厂商就已经有了自己的刘海屏手机及相应的适配方案。而从Android P开始，Google也提供了系统级的支持，提供了相应的接口供开发者来适配刘海屏，本文档旨在介绍Android P上Google官方提供的接口及依托于此的刘海屏适配方案，对于">
@@ -455,7 +455,21 @@
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">getWindow().clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);</span><br><span class="line">getWindow().addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);</span><br><span class="line">getWindow().setStatusBarColor(Color.TRANSPARENT);</span><br><span class="line">getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN | View.SYSTEM_UI_FLAG_LAYOUT_STABLE);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 由于activity全屏并且背景为浅色，需要设置浅色标志使系统将状态栏图标等设置为深色</span></span><br><span class="line">getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN | View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR | View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR);</span><br></pre></td></tr></table></figure>
 <p>&emsp;设置完成后我们的界面显示如下所示：</p>
 <p><img src="/2019/04/11/刘海屏适配/沉浸式未适配.png" alt="沉浸式未适配"></p>
-<p>&emsp;如上图所示，我们设置沉浸式后界面显示即为图中的样式，我们发现这里并没有之前显示一个黑条的情况，在全屏显示不显示状态栏的时候，如果我们没有将<code>layoutInDisplayCutoutMode</code>设置为<code>LAYOUT_IN_DISPLAY_CUTOUT_MODE_SHORT_EDGES</code>，原生设计是会将界面下移并且显示一个黑条出来的，在沉浸式时却不会，这是为什么呢？还记得之前说到的<code>layoutInDisplayCutoutMode</code>得三种取值吗？其中有一个<code>LAYOUT_IN_DISPLAY_CUTOUT_MODE_DEFAULT</code>属性含义如下:<br>| 属性取值 | 属性含义 |<br>| :—-: | :—-: |<br>| int LAYOUT_IN_DISPLAY_CUTOUT_MODE_DEFAULT | 此为默认值，只有当DisplayCutout完全包含在系统状态栏中时，才允许窗口延伸到DisplayCutout区域显示。 |</p>
+<p>&emsp;如上图所示，我们设置沉浸式后界面显示即为图中的样式，我们发现这里并没有之前显示一个黑条的情况，在全屏显示不显示状态栏的时候，如果我们没有将<code>layoutInDisplayCutoutMode</code>设置为<code>LAYOUT_IN_DISPLAY_CUTOUT_MODE_SHORT_EDGES</code>，原生设计是会将界面下移并且显示一个黑条出来的，在沉浸式时却不会，这是为什么呢？还记得之前说到的<code>layoutInDisplayCutoutMode</code>得三种取值吗？其中有一个<code>LAYOUT_IN_DISPLAY_CUTOUT_MODE_DEFAULT</code>属性含义如下:</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">属性取值</th>
+<th style="text-align:center">属性含义</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">int LAYOUT_IN_DISPLAY_CUTOUT_MODE_DEFAULT</td>
+<td style="text-align:center">此为默认值，只有当DisplayCutout完全包含在系统状态栏中时，才允许窗口延伸到DisplayCutout区域显示。</td>
+</tr>
+</tbody>
+</table>
 <p>&emsp;之前我们对这个取值可能云里雾里，经过沉浸式状态栏的显示是不是有了一个较为清晰的认识，在沉浸式的界面显示下，默认值实际上就等同于我们此前在全屏显示情况下设置的<code>LAYOUT_IN_DISPLAY_CUTOUT_MODE_SHORT_EDGES</code>属性了，因此在沉浸式的情况下并不会出现上面的黑边，而是直接全屏延伸上去了。对于上面的界面我们也按照之前全屏界面的方法进行适配即可，效果如下：</p>
 <p><img src="/2019/04/11/刘海屏适配/沉浸式适配.png" alt="沉浸式适配"></p>
 <p>&emsp;如上我们就完成了相应的沉浸式界面的适配工作，以上就是利用Google提供的适配方案适配的全过程了,总结下来需要适配的场景主要集中在沉浸式状态栏及全屏显示的界面，本身就含有状态栏的界面实际上工作不多，仅需注意一些特殊场景即可。</p>
