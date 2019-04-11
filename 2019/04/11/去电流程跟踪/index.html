@@ -1,0 +1,810 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-CN">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hexo, NexT">
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="去电流程跟踪记录概要&amp;emsp;本文记录电话拨出的整个过程，从点击拨号按钮开始跟踪整个去电流程，对其进行梳理总结，整理整个的UI展示及逻辑调用。 去电流程&amp;emsp;整个去电的流程由点击拨号按钮开始，整个拨号盘的布局定义在dialpad_fragment.xml中，拨号盘的布局存在以下几种形式:  单卡、双卡但是其中存在卡不可用或者无卡情况，则显示为单个拨号按钮 双卡并且均为可用状态，显示为两个拨">
+<meta property="og:type" content="article">
+<meta property="og:title" content="大雄的博客">
+<meta property="og:url" content="http://luckyhappybear.github.io/2019/04/11/去电流程跟踪/index.html">
+<meta property="og:site_name" content="大雄的博客">
+<meta property="og:description" content="去电流程跟踪记录概要&amp;emsp;本文记录电话拨出的整个过程，从点击拨号按钮开始跟踪整个去电流程，对其进行梳理总结，整理整个的UI展示及逻辑调用。 去电流程&amp;emsp;整个去电的流程由点击拨号按钮开始，整个拨号盘的布局定义在dialpad_fragment.xml中，拨号盘的布局存在以下几种形式:  单卡、双卡但是其中存在卡不可用或者无卡情况，则显示为单个拨号按钮 双卡并且均为可用状态，显示为两个拨">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="http://luckyhappybear.github.io/2019/04/11/去电流程跟踪/去电流程时序图.png">
+<meta property="og:updated_time" content="2019-04-11T14:11:43.530Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="大雄的博客">
+<meta name="twitter:description" content="去电流程跟踪记录概要&amp;emsp;本文记录电话拨出的整个过程，从点击拨号按钮开始跟踪整个去电流程，对其进行梳理总结，整理整个的UI展示及逻辑调用。 去电流程&amp;emsp;整个去电的流程由点击拨号按钮开始，整个拨号盘的布局定义在dialpad_fragment.xml中，拨号盘的布局存在以下几种形式:  单卡、双卡但是其中存在卡不可用或者无卡情况，则显示为单个拨号按钮 双卡并且均为可用状态，显示为两个拨">
+<meta name="twitter:image" content="http://luckyhappybear.github.io/2019/04/11/去电流程跟踪/去电流程时序图.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: 'Author'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://luckyhappybear.github.io/2019/04/11/去电流程跟踪/">
+
+
+
+
+
+  <title> | 大雄的博客</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope="" itemtype="http://schema.org/WebPage" lang="zh-CN">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope="" itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">大雄的博客</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">持之以恒</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            Home
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br>
+            
+            About
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            Tags
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            Categories
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            Archives
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://luckyhappybear.github.io/2019/04/11/去电流程跟踪/">
+
+    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="LuckyHappyBear">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/小叮当.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="大雄的博客">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline"></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2019-04-11T22:07:38+08:00">
+                2019-04-11
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="去电流程跟踪记录"><a href="#去电流程跟踪记录" class="headerlink" title="去电流程跟踪记录"></a>去电流程跟踪记录</h1><h2 id="概要"><a href="#概要" class="headerlink" title="概要"></a>概要</h2><p>&emsp;本文记录电话拨出的整个过程，从点击拨号按钮开始跟踪整个去电流程，对其进行梳理总结，整理整个的UI展示及逻辑调用。</p>
+<h2 id="去电流程"><a href="#去电流程" class="headerlink" title="去电流程"></a>去电流程</h2><p>&emsp;整个去电的流程由点击拨号按钮开始，整个拨号盘的布局定义在<code>dialpad_fragment.xml</code>中，拨号盘的布局存在以下几种形式:</p>
+<ol>
+<li>单卡、双卡但是其中存在卡不可用或者无卡情况，则显示为单个拨号按钮</li>
+<li>双卡并且均为可用状态，显示为两个拨号按钮，分别为SIM卡1及SIM卡2拨号</li>
+<li>通话状态下返回通话记录页面，弹出listView并可以进行诸如添加通话等的操作  </li>
+</ol>
+<p>&emsp;拨号盘的状态基本就为以上几种情况，在拨号盘上我们当然还有不少UI更新等操作，这些我们就不详细说明了，接下来我们继续跟进，点击的相应函数定义如下:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// TPDialtacts库 --&gt; DialpadFragment.java</span></span><br><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">handleDialButtonPressed</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="comment">// ...省略部分非核心代码</span></span><br><span class="line">        <span class="keyword">if</span> (isDigitsEmpty()) &#123; <span class="comment">// No number entered.</span></span><br><span class="line">            <span class="comment">// 此处是当我们未输入任何内容时，点击按钮的作用是找到我们上次拨打的号码，然后将其填充到号码输入框中</span></span><br><span class="line">            handleDialButtonClickWithEmptyDigits();</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="comment">// [huangzhilong start] Fix #41289: phone number display format abnormal.</span></span><br><span class="line">            <span class="keyword">final</span> String number = PhoneNumberUtils.stripSeparators(mDigits.getText().toString());</span><br><span class="line">            <span class="comment">// [huangzhilong end]</span></span><br><span class="line"></span><br><span class="line">            <span class="comment">// "persist.radio.otaspdial" is a temporary hack needed for one carrier's automated</span></span><br><span class="line">            <span class="comment">// test equipment.</span></span><br><span class="line">            <span class="comment">// <span class="doctag">TODO:</span> clean it up.</span></span><br><span class="line">            <span class="keyword">if</span> (number != <span class="keyword">null</span></span><br><span class="line">                    &amp;&amp; !TextUtils.isEmpty(mProhibitedPhoneNumberRegexp)</span><br><span class="line">                    &amp;&amp; number.matches(mProhibitedPhoneNumberRegexp)) &#123;</span><br><span class="line">                <span class="comment">/* mProhibitedPhoneNumberRegexp是一个正则string，我们可以在这里定义一些禁止拨打号码，</span></span><br><span class="line"><span class="comment">                 * 当用户输入的号码符合了mProhibitedPhoneNumberRegexp，则会弹出禁止拨打提示</span></span><br><span class="line"><span class="comment">                 */</span></span><br><span class="line">            &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                <span class="comment">// 省略intent组装逻辑，核心拨号逻辑</span></span><br><span class="line">                DialerUtils.startActivityWithErrorToast(getActivity(), intent);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<p>&emsp;如上所示，此函数最终会调用到<code>startActivityWithErrorToast()</code>，它的定义如下所示：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// TPDialtacts库 --&gt; DialerUtils.java</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">startActivityWithErrorToast</span><span class="params">(Context context, Intent intent, <span class="keyword">int</span> msgId)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            <span class="keyword">if</span> (IntentUtil.CALL_ACTION.equals(intent.getAction())) &#123;</span><br><span class="line">                <span class="comment">// ...省略部分非核心代码...</span></span><br><span class="line">                <span class="comment">// [chenshiwen start] 2.0 requirement</span></span><br><span class="line">                <span class="comment">// allow place call from service.</span></span><br><span class="line">                <span class="keyword">if</span> (context <span class="keyword">instanceof</span> Activity) &#123;</span><br><span class="line">                    <span class="keyword">final</span> <span class="keyword">boolean</span> hasCallPermission = TelecomUtil.placeCall((Activity) context, intent);</span><br><span class="line">                    <span class="keyword">if</span> (!hasCallPermission) &#123;</span><br><span class="line">                        <span class="comment">// <span class="doctag">TODO:</span> Make calling activity show request permission dialog and handle</span></span><br><span class="line">                        <span class="comment">// callback results appropriately.</span></span><br><span class="line">                        Toast.makeText(context, <span class="string">"Cannot place call without Phone permission"</span>,</span><br><span class="line">                                Toast.LENGTH_SHORT);</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                    TelecomManager tm = (TelecomManager) context.getSystemService(Context.TELECOM_SERVICE);</span><br><span class="line">                    tm.placeCall(intent.getData(), intent.getExtras());</span><br><span class="line">                &#125;</span><br><span class="line">                <span class="comment">// [chenshiwen end]</span></span><br><span class="line">            &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                context.startActivity(intent);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125; <span class="keyword">catch</span> (ActivityNotFoundException e) &#123;</span><br><span class="line">            Toast.makeText(context, msgId, Toast.LENGTH_SHORT).show();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<p>&emsp;如上所示为<code>startActivityWithErrorToast()</code>的实现，我们在拨打电话时构造的intent，它的action即为<code>IntentUtil.CALL_ACTION</code>，因此我们最终都会调用到<code>placeCall()</code>函数，至此我们应用层的拨号启动的调用就告一段落了，之后就需要到更底层去寻找相应的实现了，我们继续往下走，发现<code>placeCall()</code>函数在<code>TelecomManager.java</code>中的定义如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// frameworks/base/telecomm --&gt; TelecomManager.java</span></span><br><span class="line"><span class="meta">@RequiresPermission</span>(anyOf = &#123;android.Manifest.permission.CALL_PHONE,</span><br><span class="line">        android.Manifest.permission.MANAGE_OWN_CALLS&#125;)</span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">placeCall</span><span class="params">(Uri address, Bundle extras)</span> </span>&#123;</span><br><span class="line">    ITelecomService service = getTelecomService();</span><br><span class="line">    <span class="keyword">if</span> (service != <span class="keyword">null</span>) &#123;</span><br><span class="line">        <span class="keyword">if</span> (address == <span class="keyword">null</span>) &#123;</span><br><span class="line">            Log.w(TAG, <span class="string">"Cannot place call to empty address."</span>);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">try</span> d</span><br><span class="line">            service.placeCall(address, extras == <span class="keyword">null</span> ? <span class="keyword">new</span> Bundle() : extras,</span><br><span class="line">                    mContext.getOpPackageName());</span><br><span class="line">        &#125; <span class="keyword">catch</span> (RemoteException e) &#123;</span><br><span class="line">            Log.e(TAG, <span class="string">"Error calling ITelecomService#placeCall"</span>, e);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>&emsp;很显然这是一个binder调用，真正的实现存在于<code>Telecomm</code>库里的<code>TelecomServiceImpl.java</code>文件中，这里我们补充一点搜索技巧，在源码中看到类似<code>ITelecomService</code>的对象的相关方法调用，我们在搜索时可以直接搜索<code>ITelecomService.Stub</code>，一般来说，这个aidl接口的实现就在实现了<code>ITelecomService.Stub</code>的地方，补充完毕，我们接着向下看，我们找到了<code>TelecomServiceImpl.java</code>中相关的实现如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// packages/services/Telecomm --&gt; TelecomServiceImpl.java</span></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@see</span> android.telecom.TelecomManager#placeCall</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="meta">@Override</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">placeCall</span><span class="params">(Uri handle, Bundle extras, String callingPackage)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">        Log.startSession(<span class="string">"TSI.pC"</span>);</span><br><span class="line">        <span class="comment">// ...省略部分非核心代码...</span></span><br><span class="line">        <span class="keyword">synchronized</span> (mLock) &#123;</span><br><span class="line">                    <span class="keyword">final</span> UserHandle userHandle = Binder.getCallingUserHandle();</span><br><span class="line">                    <span class="keyword">long</span> token = Binder.clearCallingIdentity();</span><br><span class="line">                    <span class="keyword">try</span> &#123;</span><br><span class="line">                        <span class="comment">// ...省略部分非核心代码...</span></span><br><span class="line">                        mUserCallIntentProcessorFactory.create(mContext, userHandle)</span><br><span class="line">                                .processIntent(</span><br><span class="line">                                        intent, callingPackage, isSelfManaged ||</span><br><span class="line">                                                (hasCallAppOp &amp;&amp; hasCallPermission),</span><br><span class="line">                                        <span class="keyword">true</span> <span class="comment">/* isLocalInvocation */</span>);</span><br><span class="line">                    &#125; <span class="keyword">finally</span> &#123;</span><br><span class="line">                        Binder.restoreCallingIdentity(token);</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;</span><br><span class="line">    &#125; <span class="keyword">finally</span> &#123;</span><br><span class="line">        Log.endSession();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>&emsp;如上所示为<code>placeCall()</code>函数的实现，在这个函数中主要调用<code>processIntent()</code>函数，我们继续向下走，看看<code>processIntent()</code>函数的实现。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// packages/services/Telecomm --&gt; UserCallIntentProcessor.java</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">processIntent</span><span class="params">(Intent intent, String callingPackageName,</span></span></span><br><span class="line"><span class="function"><span class="params">        <span class="keyword">boolean</span> canCallNonEmergency, <span class="keyword">boolean</span> isLocalInvocation)</span> </span>&#123;</span><br><span class="line">    <span class="comment">// ...省略部分非核心代码...</span></span><br><span class="line">    String action = intent.getAction();</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (Intent.ACTION_CALL.equals(action) ||</span><br><span class="line">            Intent.ACTION_CALL_PRIVILEGED.equals(action) ||</span><br><span class="line">            Intent.ACTION_CALL_EMERGENCY.equals(action)) &#123;</span><br><span class="line">        processOutgoingCallIntent(intent, callingPackageName, canCallNonEmergency,</span><br><span class="line">                isLocalInvocation);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>&emsp;如上所示，我们又调用了<code>Telecomm</code>库里的<code>UserCallIntentProcessor.java</code>中的<code>processOutgoingCallIntent()</code>函数，我们接着来看看<code>processOutgoingCallIntent()</code>函数的定义如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// packages/services/Telecomm --&gt; UserCallIntentProcessor.java</span></span><br><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">processOutgoingCallIntent</span><span class="params">(Intent intent, String callingPackageName,</span></span></span><br><span class="line"><span class="function"><span class="params">        <span class="keyword">boolean</span> canCallNonEmergency, <span class="keyword">boolean</span> isLocalInvocation)</span> </span>&#123;</span><br><span class="line">    <span class="comment">// ...省略部分非核心代码...</span></span><br><span class="line">    sendIntentToDestination(intent, isLocalInvocation);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>&emsp;可以看到，在上面省略的部分中中我们实际上是对传入的Intent进行了一系列的操作及组装，也做了相当部分的处理及转换工作，之后调用了<code>sendIntentToDestination()</code>函数，此函数定义如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// packages/services/Telecomm --&gt; UserCallIntentProcessor.java</span></span><br><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">boolean</span> <span class="title">sendIntentToDestination</span><span class="params">(Intent intent, <span class="keyword">boolean</span> isLocalInvocation)</span> </span>&#123;</span><br><span class="line">    <span class="comment">// ...省略部分非核心代码...</span></span><br><span class="line">    <span class="keyword">if</span> (isLocalInvocation) &#123;</span><br><span class="line">        <span class="comment">// We are invoking this from TelecomServiceImpl, so TelecomSystem is available.  Don't</span></span><br><span class="line">        <span class="comment">// bother trampolining the intent, just sent it directly to the call intent processor.</span></span><br><span class="line">        <span class="comment">// <span class="doctag">TODO:</span> We should not be using an intent here; this whole flows needs cleanup.</span></span><br><span class="line">        Log.i(<span class="keyword">this</span>, <span class="string">"sendIntentToDestination: send intent to Telecom directly."</span>);</span><br><span class="line">        <span class="keyword">synchronized</span> (TelecomSystem.getInstance().getLock()) &#123;</span><br><span class="line">            TelecomSystem.getInstance().getCallIntentProcessor().processIntent(intent);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="comment">// We're calling from the UserCallActivity, so the TelecomSystem is not in the same</span></span><br><span class="line">        <span class="comment">// process; we need to trampoline to TelecomSystem in the system server process.</span></span><br><span class="line">        Log.i(<span class="keyword">this</span>, <span class="string">"sendIntentToDestination: trampoline to Telecom."</span>);</span><br><span class="line">        mContext.sendBroadcastAsUser(intent, UserHandle.SYSTEM);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">true</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>&emsp;如上所示，我们最后又对intent进行了一些组装然后走到了接下来的if语句，由于在之前的<br><code>placeCall()</code>函数中我们传入的<code>isLocalInvocation</code>变量恒为true，因此我们走的是<code>if</code>语句中的内容，即继续向下调用到了<code>Telecomm</code>中的<code>CallIntentProcessor.java</code>中的<code>processIntent()</code>函数（这里提一下，在Android P之前是没有<code>isLocalInvocation</code>这个变量的，之前的流程是要走<code>else</code>中的发送广播的内容的，之后由<code>PrimaryCallReceiver</code>类进行处理，最后还是会调用到之后的<code>processIntent()</code>函数，在这一点上，也算是Android P在流程上的一种优化吧），函数定义如下所示：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// packages/services/Telecomm --&gt; CallIntentProcessor.java</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">processIntent</span><span class="params">(Intent intent)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">final</span> <span class="keyword">boolean</span> isUnknownCall = intent.getBooleanExtra(KEY_IS_UNKNOWN_CALL, <span class="keyword">false</span>);</span><br><span class="line">        Log.i(<span class="keyword">this</span>, <span class="string">"onReceive - isUnknownCall: %s"</span>, isUnknownCall);</span><br><span class="line"></span><br><span class="line">        Trace.beginSection(<span class="string">"processNewCallCallIntent"</span>);</span><br><span class="line">        <span class="keyword">if</span> (isUnknownCall) &#123;</span><br><span class="line">            processUnknownCallIntent(mCallsManager, intent);</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="comment">/// M: Performance enhancement. Bind InCallService at the beginning. @&#123;</span></span><br><span class="line">            <span class="keyword">if</span> (MtkUtil.PREBIND_INCALLSERVICE_ENABLED &amp;&amp;</span><br><span class="line">                    !(mCallsManager.getInCallController().isBoundAndConnectedToServices())) &#123;</span><br><span class="line">                mCallsManager.getInCallController().bindToServices(<span class="keyword">null</span>);</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="comment">/// M: @&#125;</span></span><br><span class="line"></span><br><span class="line">            processOutgoingCallIntent(mContext, mCallsManager, intent);</span><br><span class="line">        &#125;</span><br><span class="line">        Trace.endSection();</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<p>&emsp;如上，在此函数中MTK也进行了相应的优化，他将service的绑定提前到了这个函数中来，可以减少用户拨号时点击拨号到通话界面显示的时长。此函数中区分了是否为unknow call，我们按照正常流程跟踪，即最后会调用到<code>processOutgoingCallIntent()</code>函数，此函数同样定义在<code>CallIntentProcessor.java</code>中，我们来看看它的实现如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// packages/services/Telecomm --&gt; CallIntentProcessor.java</span></span><br><span class="line"><span class="function"><span class="keyword">static</span> <span class="keyword">void</span> <span class="title">processOutgoingCallIntent</span><span class="params">(</span></span></span><br><span class="line"><span class="function"><span class="params">            Context context,</span></span></span><br><span class="line"><span class="function"><span class="params">            CallsManager callsManager,</span></span></span><br><span class="line"><span class="function"><span class="params">            Intent intent)</span> </span>&#123;</span><br><span class="line">        <span class="comment">// ...省略部分非核心逻辑...</span></span><br><span class="line">        <span class="comment">// 首先建立一个call对象，并且建立连接</span></span><br><span class="line">        <span class="comment">// Send to CallsManager to ensure the InCallUI gets kicked off before the broadcast returns</span></span><br><span class="line">        Call call = callsManager</span><br><span class="line">                .startOutgoingCall(handle, phoneAccountHandle, clientExtras, initiatingUser,</span><br><span class="line">                        intent);</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 使用上面创建的call对象进行之后的操作</span></span><br><span class="line">        <span class="keyword">if</span> (call != <span class="keyword">null</span>) &#123;</span><br><span class="line">            sendNewOutgoingCallIntent(context, call, callsManager, intent);</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="comment">/// M: Performance enhancement. Unbind InCallService as call is not added.</span></span><br><span class="line">            <span class="keyword">if</span> (MtkUtil.PREBIND_INCALLSERVICE_ENABLED) &#123;</span><br><span class="line">                callsManager.getInCallController().unbindUselessService();</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="comment">/// M: @&#125;</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<p>&emsp;由上面我们知道了首先会通过<code>Telecomm</code>库里的<code>CallsManager</code>中的<code>startOutgoingCall()</code>函数创建一个call并在之后的流程中使用这个call，因此我们先来分析这个call对象的创建过程，我们继续跟踪，来看看<code>startOutgoingCall()</code>函数的实现：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// packages/services/Telecomm --&gt; CallsManager.java</span></span><br><span class="line"><span class="function">Call <span class="title">startOutgoingCall</span><span class="params">(Uri handle, PhoneAccountHandle phoneAccountHandle, Bundle extras,</span></span></span><br><span class="line"><span class="function"><span class="params">        UserHandle initiatingUser, Intent originalIntent)</span> </span>&#123;</span><br><span class="line">    <span class="comment">// ...省略部分重用新建call的代码...</span></span><br><span class="line">    <span class="keyword">if</span> (!call.isEmergencyCall()</span><br><span class="line">        &amp;&amp; (isPotentialMMICode(handle) || isPotentialInCallMMICode) &amp;&amp; !needsAccountSelection) &#123;</span><br><span class="line">        <span class="comment">// Do not add the call if it is a potential MMI code.</span></span><br><span class="line">        call.addListener(<span class="keyword">this</span>);</span><br><span class="line">    &#125; <span class="keyword">else</span> <span class="keyword">if</span> (!mCalls.contains(call)) &#123;</span><br><span class="line">        <span class="comment">// We check if mCalls already contains the call because we could potentially be reusing</span></span><br><span class="line">        <span class="comment">// a call which was previously added (See &#123;@link #reuseOutgoingCall&#125;).</span></span><br><span class="line">        addCall(call);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> call;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>&emsp;如上所示，一般来说我们的流程会进入到<code>addCall</code>中，我们来看看<code>addCall</code>函数的实现如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// packages/services/Telecomm --&gt; CallsManager.java</span></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * Adds the specified call to the main list of live calls.</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@param</span> call The call to add.</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">addCall</span><span class="params">(Call call)</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    call.addListener(<span class="keyword">this</span>);</span><br><span class="line">    <span class="comment">// 将新建的call对象加入到mCall set中</span></span><br><span class="line">    mCalls.add(call);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// ...省略部分代码...</span></span><br><span class="line">    <span class="keyword">for</span> (CallsManagerListener listener : mListeners) &#123;</span><br><span class="line">        <span class="comment">// 此处会逐个触发已经注册的listener的onCallAdded回调，对于我们来说最重要的即</span></span><br><span class="line">        <span class="comment">// 为InCallController的onCallAdded回调，这个回调是关联底层与上层的关键回调</span></span><br><span class="line">        listener.onCallAdded(call);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// ...省略部分代码...</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>&emsp;如上所示，创建成功call对象后会将其加入一个call的set中，这个set的数据结构如下所示：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// packages/services/Telecomm --&gt; CallsManager.java</span></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * The main call repository. Keeps an instance of all live calls. New incoming and outgoing</span></span><br><span class="line"><span class="comment"> * calls are added to the map and removed when the calls move to the disconnected state.</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * ConcurrentHashMap constructor params: 8 is initial table size, 0.9f is</span></span><br><span class="line"><span class="comment"> * load factor before resizing, 1 means we only expect a single thread to</span></span><br><span class="line"><span class="comment"> * access the map so make only a single shard</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">private</span> <span class="keyword">final</span> Set&lt;Call&gt; mCalls = Collections.newSetFromMap(</span><br><span class="line">        <span class="keyword">new</span> ConcurrentHashMap&lt;Call, Boolean&gt;(<span class="number">8</span>, <span class="number">0.9f</span>, <span class="number">1</span>));</span><br></pre></td></tr></table></figure>
+<p>&emsp;如上所示，我们会将建立的call对象添加到上面的set中，这个set集中管理目前建立的所有的call对象，每个call对象都相当于一通电话，在之后可以使用这个set快速的得出当前通话列表的状况。之后会回调<code>onCallAdded()</code>函数，这个是一个核心函数，当一个<code>call</code>被加入时，有很多模块是对<code>call</code>加入感兴趣的，例如audio模块，Incall模块等，与用户联系最密切的就是UI界面的更新了，<code>InCallController</code>是注册了这个<code>onCallAdded()</code>的监听的，当有<code>call</code>加入后<code>InCallController</code>的监听器会立即被回调然后做一系列之后的界面更新操作，这部分我们现在这个mark一下，等梳理完整个拨号流程后我们会回到这了详细分析这部分向上的流程，现在我们回到刚才的<code>processOutgoingCallIntent()</code>函数中继续跟踪向下的流程，在这个函数中先是调用<code>startOutgoingCall()</code>函数新建或者重用一个<code>call</code>对象，之后就会用这个<code>call</code>对象继续向下的流程，我们来继续向下跟踪拿到call对象后做了什么，即继续跟踪之后的<code>sendNewOutgoingCallIntent()</code>函数，如果有同学已经跟丢了这部分的话先回去看看之前的<code>processOutgoingCallIntent()</code>函数。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// packages/services/Telecomm --&gt; CallIntentProcessor.java</span></span><br><span class="line"><span class="function"><span class="keyword">static</span> <span class="keyword">void</span> <span class="title">sendNewOutgoingCallIntent</span><span class="params">(Context context, Call call, CallsManager callsManager,</span></span></span><br><span class="line"><span class="function"><span class="params">        Intent intent)</span> </span>&#123;</span><br><span class="line">    <span class="comment">// ...省略部分非核心代码...</span></span><br><span class="line">    NewOutgoingCallIntentBroadcaster broadcaster = <span class="keyword">new</span> NewOutgoingCallIntentBroadcaster(</span><br><span class="line">            context, callsManager, call, intent, callsManager.getPhoneNumberUtilsAdapter(),</span><br><span class="line">            isPrivilegedDialer);</span><br><span class="line">    <span class="keyword">final</span> <span class="keyword">int</span> result = broadcaster.processIntent();</span><br><span class="line">    <span class="comment">// ...省略部分非核心代码...</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>&emsp;如上，我们新建了一个<code>NewOutgoingCallIntentBroadcaster</code>对象，然后调用了<code>processIntent()</code>函数，此函数定义如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// packages/services/Telecomm --&gt; NewOutgoingCallIntentBroadcaster.java</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">processIntent</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="comment">// ...省略大片的intent及紧急号码等的处理逻辑        </span></span><br><span class="line">    <span class="keyword">if</span> (sendNewOutgoingCallBroadcast) &#123;</span><br><span class="line">        <span class="comment">// ...省略部分非核心代码...</span></span><br><span class="line">        broadcastIntent(intent, number, !callImmediately, targetUser);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> DisconnectCause.NOT_DISCONNECTED;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>&emsp;如上，实际上如果是正常拨号的话我们最后会走到这个地方来，然后调用<code>broadcastIntent()</code>函数，此函数定义如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// packages/services/Telecomm --&gt; NewOutgoingCallIntentBroadcaster.java</span></span><br><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">broadcastIntent</span><span class="params">(</span></span></span><br><span class="line"><span class="function"><span class="params">            Intent originalCallIntent,</span></span></span><br><span class="line"><span class="function"><span class="params">            String number,</span></span></span><br><span class="line"><span class="function"><span class="params">            <span class="keyword">boolean</span> receiverRequired,</span></span></span><br><span class="line"><span class="function"><span class="params">            UserHandle targetUser)</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// ...省略Intent的处理逻辑...        </span></span><br><span class="line">    mContext.sendOrderedBroadcastAsUser(</span><br><span class="line">            broadcastIntent,</span><br><span class="line">            targetUser,</span><br><span class="line">            android.Manifest.permission.PROCESS_OUTGOING_CALLS,</span><br><span class="line">            AppOpsManager.OP_PROCESS_OUTGOING_CALLS,</span><br><span class="line">            receiverRequired ? <span class="keyword">new</span> NewOutgoingCallBroadcastIntentReceiver() : <span class="keyword">null</span>,</span><br><span class="line">            <span class="keyword">null</span>,  <span class="comment">// scheduler</span></span><br><span class="line">            Activity.RESULT_OK,  <span class="comment">// initialCode</span></span><br><span class="line">            number,  <span class="comment">// initialData: initial value for the result data (number to be modified)</span></span><br><span class="line">            <span class="keyword">null</span>);  <span class="comment">// initialExtras</span></span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>&emsp;在这里经过处理后会发送一个广播，这里我们可以看到如果<code>receiverRequired</code>变量值为<code>true</code>的话会由<code>NewOutgoingCallBroadcastIntentReceiver</code>类来进行处理，而这个变量的值是由之前的<code>callImmediately</code>来决定的，这个值为true的情况基本都与紧急拨号相关，在这里我们分析的是普通情况下的拨号，因此<code>!callImmediately</code>为true，即<code>receiverRequired</code>变量值为<code>true</code>，因此这个广播会由<code>NewOutgoingCallBroadcastIntentReceiver</code>类来处理，其处理逻辑如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// packages/services/Telecomm --&gt; NewOutgoingCallIntentBroadcaster.java</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">NewOutgoingCallBroadcastIntentReceiver</span> <span class="keyword">extends</span> <span class="title">BroadcastReceiver</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">        <span class="meta">@Override</span></span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onReceive</span><span class="params">(Context context, Intent intent)</span> </span>&#123;</span><br><span class="line">            <span class="comment">// ...省略相关处理代码...</span></span><br><span class="line">            placeOutgoingCallImmediately(mCall, resultHandleUri, gatewayInfo,</span><br><span class="line">                    mIntent.getBooleanExtra(</span><br><span class="line">                            TelecomManager.EXTRA_START_CALL_WITH_SPEAKERPHONE, <span class="keyword">false</span>),</span><br><span class="line">                    mIntent.getIntExtra(TelecomManager.EXTRA_START_CALL_WITH_VIDEO_STATE,</span><br><span class="line">                            VideoProfile.STATE_AUDIO_ONLY));</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<p>&emsp;在<code>onReceive()</code>方法中做了些设置超时时间等操作，之后会调用到<code>placeOutgoingCallImmediately()</code>函数，此函数定义如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// packages/services/Telecomm --&gt; NewOutgoingCallIntentBroadcaster.java</span></span><br><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">placeOutgoingCallImmediately</span><span class="params">(Call call, Uri handle, GatewayInfo gatewayInfo,</span></span></span><br><span class="line"><span class="function"><span class="params">        <span class="keyword">boolean</span> speakerphoneOn, <span class="keyword">int</span> videoState)</span> </span>&#123;</span><br><span class="line">    <span class="comment">// ...省略非核心代码...</span></span><br><span class="line">    mCallsManager.placeOutgoingCall(call, handle, gatewayInfo, speakerphoneOn, videoState);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>&emsp;<code>placeOutgoingCallImmediately()</code>函数中主要就是调用了<code>CallsManager.java</code>类中的<code>placeOutgoingCall()</code>函数，此函数定义如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// packages/services/Telecomm --&gt; CallsManager.java</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">placeOutgoingCall</span><span class="params">(Call call, Uri handle, GatewayInfo gatewayInfo,</span></span></span><br><span class="line"><span class="function"><span class="params">        <span class="keyword">boolean</span> speakerphoneOn, <span class="keyword">int</span> videoState)</span> </span>&#123;</span><br><span class="line">    <span class="comment">// ...省略逻辑处理代码...</span></span><br><span class="line">    call.startCreateConnection(mPhoneAccountRegistrar);</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>&emsp;在这个函数中调用的核心函数就是<code>startCreateConnection()</code>函数，我们需要调用这个函数去建立与底层的连接，此函数的定义如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// packages/services/Telecomm --&gt; Call.java</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">startCreateConnection</span><span class="params">(PhoneAccountRegistrar phoneAccountRegistrar)</span> </span>&#123;</span><br><span class="line">    <span class="comment">// ...省略判空处理...</span></span><br><span class="line">    mCreateConnectionProcessor = <span class="keyword">new</span> CreateConnectionProcessor(<span class="keyword">this</span>, mRepository, <span class="keyword">this</span>,</span><br><span class="line">            phoneAccountRegistrar, mContext);</span><br><span class="line">    mCreateConnectionProcessor.process();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>&emsp;在此函数中，我们创建了一个<code>CreateConnectionProcessor</code>对象然后调用了它的<code>process()</code>方法，显而易见，在这里我们需要关注这个<code>process()</code>方法，它的定义如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// packages/services/Telecomm --&gt; CreateConnectionProcessor.java</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">process</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="comment">// ... 省略创建建立连接必要信息记录的相关逻辑 ...</span></span><br><span class="line">    attemptNextPhoneAccount();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>&emsp;在<code>process()</code>函数中，又调用了<code>attemptNextPhoneAccount()</code>函数，此函数定义如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// packages/services/Telecomm --&gt; CreateConnectionProcessor.java</span></span><br><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">attemptNextPhoneAccount</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="comment">// ...省略权限处理逻辑...</span></span><br><span class="line">    <span class="keyword">if</span> (mCallResponse != <span class="keyword">null</span> &amp;&amp; attempt != <span class="keyword">null</span>) &#123;</span><br><span class="line">        Log.i(<span class="keyword">this</span>, <span class="string">"Trying attempt %s"</span>, attempt);</span><br><span class="line">        PhoneAccountHandle phoneAccount = attempt.connectionManagerPhoneAccount;</span><br><span class="line">        mService = mRepository.getService(phoneAccount.getComponentName(),</span><br><span class="line">                phoneAccount.getUserHandle());</span><br><span class="line">        <span class="keyword">if</span> (mService == <span class="keyword">null</span>) &#123;</span><br><span class="line">            <span class="comment">// ...处理service为空情况...</span></span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="comment">// ...省略call对象的包装处理过程...</span></span><br><span class="line">            <span class="keyword">if</span> (mCall.isIncoming()) &#123;</span><br><span class="line">                mService.createConnection(mCall, CreateConnectionProcessor.<span class="keyword">this</span>);</span><br><span class="line">            &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                <span class="comment">// Start to create the connection for outgoing call after the ConnectionService</span></span><br><span class="line">                <span class="comment">// of the call has gained the focus.</span></span><br><span class="line">                mCall.getConnectionServiceFocusManager().requestFocus(</span><br><span class="line">                        mCall,</span><br><span class="line">                        <span class="keyword">new</span> CallsManager.RequestCallback(<span class="keyword">new</span> CallsManager.PendingAction() &#123;</span><br><span class="line">                            <span class="meta">@Override</span></span><br><span class="line">                            <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">performAction</span><span class="params">()</span> </span>&#123;</span><br><span class="line">                                Log.d(<span class="keyword">this</span>, <span class="string">"perform create connection"</span>);</span><br><span class="line">                                mService.createConnection(</span><br><span class="line">                                        mCall,</span><br><span class="line">                                        CreateConnectionProcessor.<span class="keyword">this</span>);</span><br><span class="line">                            &#125;</span><br><span class="line">                        &#125;));</span><br><span class="line"></span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="comment">// ...连接建立失败...</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>&emsp;可以看到，上面处理了来去电两种情况，最后均执行了<code>mService.createConnection(mCall, CreateConnectionProcessor.this)</code>，继续跟踪，此函数定义如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// packages/services/Telecomm --&gt; ConnectionServiceWrapper.java</span></span><br><span class="line"><span class="meta">@VisibleForTesting</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">createConnection</span><span class="params">(<span class="keyword">final</span> Call call, <span class="keyword">final</span> CreateConnectionResponse response)</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// ...省略处理逻辑...</span></span><br><span class="line">    BindCallback callback = <span class="keyword">new</span> BindCallback() &#123;</span><br><span class="line">        <span class="meta">@Override</span></span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onSuccess</span><span class="params">()</span> </span>&#123;</span><br><span class="line">            <span class="comment">// ...省略处理逻辑...</span></span><br><span class="line">            <span class="keyword">try</span> &#123;</span><br><span class="line">                mServiceInterface.createConnection(</span><br><span class="line">                        call.getConnectionManagerPhoneAccount(),</span><br><span class="line">                        callId,</span><br><span class="line">                        connectionRequest,</span><br><span class="line">                        call.shouldAttachToExistingConnection(),</span><br><span class="line">                        call.isUnknown(),</span><br><span class="line">                        Log.getExternalSession());</span><br><span class="line"></span><br><span class="line">            &#125; <span class="keyword">catch</span> (RemoteException e) &#123;</span><br><span class="line">                <span class="comment">// ...省略异常处理...</span></span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="meta">@Override</span></span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onFailure</span><span class="params">()</span> </span>&#123;</span><br><span class="line">            Log.e(<span class="keyword">this</span>, <span class="keyword">new</span> Exception(), <span class="string">"Failure to call %s"</span>, getComponentName());</span><br><span class="line">            response.handleCreateConnectionFailure(<span class="keyword">new</span> DisconnectCause(DisconnectCause.ERROR));</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;;</span><br><span class="line"></span><br><span class="line">    mBinder.bind(callback, call);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>&emsp;这里我们创建了一个<code>callback</code>，然后调用了<code>bind()</code>方法，此函数定义如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// packages/services/Telecomm --&gt; ServiceBinder.java</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">bind</span><span class="params">(BindCallback callback, Call call)</span> </span>&#123;</span><br><span class="line">    <span class="comment">// ...省略部分非核心代码...</span></span><br><span class="line">    <span class="keyword">if</span> (mServiceConnection == <span class="keyword">null</span>) &#123;</span><br><span class="line">        Intent serviceIntent = <span class="keyword">new</span> Intent(mServiceAction).setComponent(mComponentName);</span><br><span class="line">        ServiceConnection connection = <span class="keyword">new</span> ServiceBinderConnection(call);</span><br><span class="line"></span><br><span class="line">        <span class="keyword">final</span> <span class="keyword">int</span> bindingFlags = Context.BIND_AUTO_CREATE | Context.BIND_FOREGROUND_SERVICE;</span><br><span class="line">        <span class="keyword">final</span> <span class="keyword">boolean</span> isBound;</span><br><span class="line">        <span class="keyword">if</span> (mUserHandle != <span class="keyword">null</span>) &#123;</span><br><span class="line">            isBound = mContext.bindServiceAsUser(serviceIntent, connection, bindingFlags,</span><br><span class="line">                    mUserHandle);</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            isBound = mContext.bindService(serviceIntent, connection, bindingFlags);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">// ...省略部分非核心代码...</span></span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="comment">// ...省略部分非核心代码...</span></span><br><span class="line">        handleSuccessfulConnection();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>&emsp;此函数实际上分两种情况处理，若与服务的连接已经建立，则直接调用<code>handleSuccessfulConnection()</code>函数，如果服务连接未建立则需要建立服务连接，此时会调用<code>bindServiceAsUser()</code>，之后会回调到<code>ServiceConnection</code>的<code>onServiceConnected()</code>函数，之后仍会调用到<code>handleSuccessfulConnection()</code>函数（由于我们是分析正常接通的电话流程，因此我们会一直按照正常流程进行），对于MTK的基线代码他并没有在<code>onServiceConnected()</code>函数中直接调用<code>handleSuccessfulConnection()</code>，而是走了以下流程：<code>onServiceConnected()</code>–&gt; <code>setDefaultBinder()</code>–&gt; <code>setMtkBinder()</code> –&gt; <code>setMtkServiceInterface()</code> –&gt; <code>addMtkConnectionServiceAdapter()</code> –&gt; <code>setIConnectionServiceBinder()</code> –&gt; <code>setBinder()</code> –&gt; <code>addConnectionServiceAdapter()</code> –&gt; ‘onConnectionBridgeSetup()’ –&gt; <code>handleSuccessfulConnection()</code>，无论如何，最后都会走到<code>handleSuccessfulConnection()</code>函数，因此我们接下来看看此函数的定义：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// packages/services/Telecomm --&gt; ServiceBinder.java</span></span><br><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">handleSuccessfulConnection</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="comment">/// M: Add lock to synchroized the action to fix multi-threading issues.</span></span><br><span class="line">    <span class="keyword">synchronized</span> (mBinderLock) &#123;</span><br><span class="line">        <span class="keyword">for</span> (BindCallback callback : mCallbacks) &#123;</span><br><span class="line">            callback.onSuccess();</span><br><span class="line">        &#125;</span><br><span class="line">        mCallbacks.clear();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>&emsp;在<code>handleSuccessfulConnection()</code>中，回调了callback的<code>onSuccess()</code>方法，还记的这个callback是啥时候加进来的吗？就是在<code>createConnection()</code>函数中调用<code>bind()</code>加入的，它的定义之前已经贴过了，会有<code>onSuccess()</code>与<code>onFailure()</code>两个回调方法，为了不让大家回过头在去看一遍，我们将<code>onSuccess()</code>再贴一遍，如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// packages/services/Telecomm --&gt; ConnectionServiceWrapper.java</span></span><br><span class="line"><span class="meta">@Override</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onSuccess</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="comment">// ...省略处理逻辑...</span></span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">        mServiceInterface.createConnection(</span><br><span class="line">                call.getConnectionManagerPhoneAccount(),</span><br><span class="line">                callId,</span><br><span class="line">                connectionRequest,</span><br><span class="line">                call.shouldAttachToExistingConnection(),</span><br><span class="line">                call.isUnknown(),</span><br><span class="line">                Log.getExternalSession());</span><br><span class="line"></span><br><span class="line">    &#125; <span class="keyword">catch</span> (RemoteException e) &#123;</span><br><span class="line">        <span class="comment">// ...省略异常处理...</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>&emsp;实际上就是调用了<code>mServiceInterface</code>对象的<code>createConnection()</code>方法，<code>mServiceInterface</code>是一个<code>IConnectionService</code>的对象，毫无疑问，这是一个跨进程调用，利用我们前面讲过的搜索技巧，可以找到此方法定义在framework/base/telecomm/java/android/telecom/connectionService.java中，定义如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// framework/base/telecomm --&gt; ConnectionService.java</span></span><br><span class="line"><span class="comment">/** <span class="doctag">@hide</span> */</span></span><br><span class="line"><span class="keyword">protected</span> IBinder mBinder = <span class="keyword">new</span> IConnectionService.Stub() &#123;</span><br><span class="line">    <span class="comment">// ...省略其他函数定义...</span></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">createConnection</span><span class="params">(</span></span></span><br><span class="line"><span class="function"><span class="params">            PhoneAccountHandle connectionManagerPhoneAccount,</span></span></span><br><span class="line"><span class="function"><span class="params">            String id,</span></span></span><br><span class="line"><span class="function"><span class="params">            ConnectionRequest request,</span></span></span><br><span class="line"><span class="function"><span class="params">            <span class="keyword">boolean</span> isIncoming,</span></span></span><br><span class="line"><span class="function"><span class="params">            <span class="keyword">boolean</span> isUnknown,</span></span></span><br><span class="line"><span class="function"><span class="params">            Session.Info sessionInfo)</span> </span>&#123;</span><br><span class="line">        Log.startSession(sessionInfo, SESSION_CREATE_CONN);</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            <span class="comment">// ...省略参数封装逻辑...</span></span><br><span class="line">            mHandler.obtainMessage(MSG_CREATE_CONNECTION, args).sendToTarget();</span><br><span class="line">        &#125; <span class="keyword">finally</span> &#123;</span><br><span class="line">            Log.endSession();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// ...省略其他函数定义...</span></span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<p>&emsp;如上，这个接口中有非常多的函数定义，处理了包括建立连接，连接建立成功、失败，拒接，静音，通话保持等等等等情况，有兴趣的可以去看看这个借口的定义，在这里我们仅作为流程跟踪，因此就不做详细说明了，继续跟踪，这边是利用一个handler发送了一个<code>MSG_CREATE_CONNECTION</code>消息出来，我们看看消息的处理部分代码，如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// framework/base/telecomm --&gt; ConnectionService.java</span></span><br><span class="line"><span class="keyword">case</span> MSG_CREATE_CONNECTION: &#123;</span><br><span class="line">    SomeArgs args = (SomeArgs) msg.obj;</span><br><span class="line">    Log.continueSession((Session) args.arg4, SESSION_HANDLER + SESSION_CREATE_CONN);</span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">        <span class="comment">// ...省略各项参数获取...</span></span><br><span class="line">        <span class="keyword">if</span> (!mAreAccountsInitialized) &#123;</span><br><span class="line">            Log.d(<span class="keyword">this</span>, <span class="string">"Enqueueing pre-init request %s"</span>, id);</span><br><span class="line">            mPreInitializationConnectionRequests.add(</span><br><span class="line">                    <span class="keyword">new</span> android.telecom.Logging.Runnable(</span><br><span class="line">                            SESSION_HANDLER + SESSION_CREATE_CONN + <span class="string">".pICR"</span>,</span><br><span class="line">                            <span class="keyword">null</span> <span class="comment">/*lock*/</span>) &#123;</span><br><span class="line">                <span class="meta">@Override</span></span><br><span class="line">                <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">loggedRun</span><span class="params">()</span> </span>&#123;</span><br><span class="line">                    createConnection(</span><br><span class="line">                            connectionManagerPhoneAccount,</span><br><span class="line">                            id,</span><br><span class="line">                            request,</span><br><span class="line">                            isIncoming,</span><br><span class="line">                            isUnknown);</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;.prepare());</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            createConnection(</span><br><span class="line">                    connectionManagerPhoneAccount,</span><br><span class="line">                    id,</span><br><span class="line">                    request,</span><br><span class="line">                    isIncoming,</span><br><span class="line">                    isUnknown);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125; <span class="keyword">finally</span> &#123;</span><br><span class="line">        args.recycle();</span><br><span class="line">        Log.endSession();</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">break</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>&emsp;可以看到，分accounts准备好与未准备好两种情况，最后都会去执行createConnection()函数，定义如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// framework/base/telecomm --&gt; ConnectionService.java</span></span><br><span class="line"><span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">createConnection</span><span class="params">(</span></span></span><br><span class="line"><span class="function"><span class="params">        <span class="keyword">final</span> PhoneAccountHandle callManagerAccount,</span></span></span><br><span class="line"><span class="function"><span class="params">        <span class="keyword">final</span> String callId,</span></span></span><br><span class="line"><span class="function"><span class="params">        <span class="keyword">final</span> ConnectionRequest request,</span></span></span><br><span class="line"><span class="function"><span class="params">        <span class="keyword">boolean</span> isIncoming,</span></span></span><br><span class="line"><span class="function"><span class="params">        <span class="keyword">boolean</span> isUnknown)</span> </span>&#123;</span><br><span class="line">    <span class="comment">// ...省略条件获取代码...</span></span><br><span class="line">    Connection connection = <span class="keyword">null</span>;</span><br><span class="line">    <span class="keyword">if</span> (isHandover) &#123;</span><br><span class="line">        PhoneAccountHandle fromPhoneAccountHandle = request.getExtras() != <span class="keyword">null</span></span><br><span class="line">                ? (PhoneAccountHandle) request.getExtras().getParcelable(</span><br><span class="line">                TelecomManager.EXTRA_HANDOVER_FROM_PHONE_ACCOUNT) : <span class="keyword">null</span>;</span><br><span class="line">        <span class="keyword">if</span> (!isIncoming) &#123;</span><br><span class="line">            connection = onCreateOutgoingHandoverConnection(fromPhoneAccountHandle, request);</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            connection = onCreateIncomingHandoverConnection(fromPhoneAccountHandle, request);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        connection = isUnknown ? onCreateUnknownConnection(callManagerAccount, request)</span><br><span class="line">                : isIncoming ? onCreateIncomingConnection(callManagerAccount, request)</span><br><span class="line">                : onCreateOutgoingConnection(callManagerAccount, request);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// ... 省略非核心代码 ...</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>&emsp;我们根据是否是handover call及是来电还是去电进行了区分，由于我们分析的是去电流程，因此最后调用的是<code>onCreateOutgoingConnection()</code>函数，函数定义在<code>Telephony</code>库中，如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// packages/services/Telephony --&gt; TelephonyConnectionService.java</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> Connection <span class="title">onCreateOutgoingConnection</span><span class="params">(</span></span></span><br><span class="line"><span class="function"><span class="params">            PhoneAccountHandle connectionManagerPhoneAccount,</span></span></span><br><span class="line"><span class="function"><span class="params">            <span class="keyword">final</span> ConnectionRequest request)</span> </span>&#123;</span><br><span class="line">    <span class="comment">// ...省略无数行异常情况处理及紧急拨号相关处理...</span></span><br><span class="line">    placeOutgoingConnection((TelephonyConnection) resultConnection, phone, request,</span><br><span class="line">            isEmergencyNumber);</span><br><span class="line">    <span class="comment">// ...省略无数行异常情况处理及紧急拨号相关处理...    </span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>&emsp;在正常非紧急拨号流程下最后就会走到这个<code>placeOutgoingConnection()</code>函数中，此函数定义如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// packages/services/Telephony --&gt; TelephonyConnectionService.java</span></span><br><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">placeOutgoingConnection</span><span class="params">(</span></span></span><br><span class="line"><span class="function"><span class="params">        TelephonyConnection connection, Phone phone, <span class="keyword">int</span> videoState, Bundle extras)</span> </span>&#123;</span><br><span class="line">    String number = connection.getAddress().getSchemeSpecificPart();</span><br><span class="line">    <span class="keyword">boolean</span> isEmergencyNumber = PhoneNumberUtils.isLocalEmergencyNumber(<span class="keyword">this</span>, number);</span><br><span class="line">    placeOutgoingConnection(connection, phone, videoState, extras, isEmergencyNumber);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// packages/services/Telephony --&gt; TelephonyConnectionService.java</span></span><br><span class="line"><span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">placeOutgoingConnection</span><span class="params">(</span></span></span><br><span class="line"><span class="function"><span class="params">        TelephonyConnection connection, Phone phone, <span class="keyword">int</span> videoState, Bundle extras,</span></span></span><br><span class="line"><span class="function"><span class="params">        <span class="keyword">boolean</span> isEmergencyNumber)</span> </span>&#123;</span><br><span class="line">    <span class="comment">// ...省略部分非核心代码...</span></span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">        <span class="keyword">if</span> (phone != <span class="keyword">null</span>) &#123;</span><br><span class="line">            <span class="comment">// ...省略部分非核心代码...</span></span><br><span class="line">            originalConnection = phone.dial(number, <span class="keyword">new</span> ImsPhone.ImsDialArgs.Builder()</span><br><span class="line">                    .setVideoState(videoState)</span><br><span class="line">                    .setIntentExtras(extras)</span><br><span class="line">                    .setRttTextStream(connection.getRttTextStream())</span><br><span class="line">                    .build());</span><br><span class="line">        &#125;</span><br><span class="line">    &#125; <span class="keyword">catch</span> (CallStateException e) &#123;</span><br><span class="line">       <span class="comment">// ...省略异常处理代码...</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// ...省略其他非核心代码...</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>&emsp;这个<code>dial()</code>方法针对不同类型的<code>phone</code>对象定义并不完全相同，分为GsmCdmaPhone，SipPhone及ImsPhone，我们通常打的电话基本使用的都是GsmCdmaPhone对象，在706的代码中，mtk平台对其进行了定制，因此使用的实际上是MtkGsmCdmaPhone的对象，函数定义如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// frameworks/opt/telephony --&gt; MtkGsmCdmaPhone.java</span></span><br><span class="line"><span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> Connection <span class="title">dial</span><span class="params">(String dialString, @NonNull DialArgs dialArgs)</span></span></span><br><span class="line"><span class="function">            <span class="keyword">throws</span> CallStateException </span>&#123;</span><br><span class="line">        <span class="comment">// ...省略巨量异常处理等代码...</span></span><br><span class="line">        <span class="keyword">if</span> (isPhoneTypeGsm()) &#123;</span><br><span class="line">            <span class="keyword">return</span> dialInternal(dialString, <span class="keyword">new</span> DialArgs.Builder&lt;&gt;()</span><br><span class="line">                    .setIntentExtras(dialArgs.intentExtras)</span><br><span class="line">                    .build());</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="keyword">return</span> dialInternal(dialString, dialArgs);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<p>&emsp;调用到了<code>MtkGsmCdmaPhone</code>类中的<code>dialInternal()</code>函数，定义如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// frameworks/opt/telephony --&gt; MtkGsmCdmaPhone.java</span></span><br><span class="line"><span class="function"><span class="keyword">protected</span> Connection <span class="title">dialInternal</span><span class="params">(String dialString, DialArgs dialArgs,</span></span></span><br><span class="line"><span class="function"><span class="params">        ResultReceiver wrappedCallback)</span></span></span><br><span class="line"><span class="function">        <span class="keyword">throws</span> CallStateException </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// ...省略非核心代码...</span></span><br><span class="line">    <span class="keyword">if</span> (isPhoneTypeGsm()) &#123;</span><br><span class="line">        <span class="comment">// ...省略非核心代码...</span></span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> (mmi == <span class="keyword">null</span>) &#123;</span><br><span class="line">            <span class="keyword">return</span> mCT.dial(newDialString, dialArgs.uusInfo, dialArgs.intentExtras);</span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (mmi.isTemporaryModeCLIR()) &#123;</span><br><span class="line">            <span class="keyword">return</span> mCT.dial(mmi.mDialingNumber, mmi.getCLIRMode(), dialArgs.uusInfo,</span><br><span class="line">                    dialArgs.intentExtras);</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="comment">// ...省略非核心代码...</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> mCT.dial(newDialString);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>&emsp;如上，会调用<code>mCT.dial()</code>，<code>mCT</code>是一个<code>GsmCdmaCallTracker</code>对象，MTK也进行了重写，最终使用的是<code>MtkGsmCdmaCallTracker</code>类中的<code>dial()</code>函数，定义如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// frameworks/opt/telephony --&gt; MtkGsmCdmaCallTracker.java</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">synchronized</span> Connection <span class="title">dial</span><span class="params">(String dialString, <span class="keyword">int</span> clirMode, UUSInfo uusInfo,</span></span></span><br><span class="line"><span class="function"><span class="params">                                    Bundle intentExtras)</span> <span class="keyword">throws</span> CallStateException </span>&#123;</span><br><span class="line">    <span class="comment">// ...省略巨量创建底层连接代码，此部分会向RIL层发送拨号请求，建立连接...</span></span><br><span class="line">    mCi.dial(newDialString, clirMode, uusInfo, obtainCompleteMessage());</span><br><span class="line">    <span class="comment">// ...省略非核心代码...</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>&emsp;<code>mCi</code>对象是一个<code>CommandsInterface</code>接口对象，此接口由RIL.java实现，函数定义如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// frameworks/opt/telephony --&gt; RIL.java</span></span><br><span class="line"><span class="meta">@Override</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">dial</span><span class="params">(String address, <span class="keyword">int</span> clirMode, UUSInfo uusInfo, Message result)</span> </span>&#123;</span><br><span class="line">    IRadio radioProxy = getRadioProxy(result);</span><br><span class="line">    <span class="keyword">if</span> (radioProxy != <span class="keyword">null</span>) &#123;</span><br><span class="line">        <span class="comment">// ...省略部分非核心参数处理代码...</span></span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            radioProxy.dial(rr.mSerial, dialInfo);</span><br><span class="line">        &#125; <span class="keyword">catch</span> (RemoteException | RuntimeException e) &#123;</span><br><span class="line">            handleRadioProxyExceptionForRR(rr, <span class="string">"dial"</span>, e);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>&emsp;自此往后就为RIL层与底层的消息交互了，这部分消息交互的内容过于底层，笔者也就不再向下继续跟踪了。至此，去电流程就跟踪完毕了，大家还记得之前留着的小尾巴吗，就是我们与上层的交互部分，我们一直在向下进行跟踪，但实际上在最开始的<code>addCall()</code>函数被调起的时候，是会调用<code>onCallAdded()</code>函数通知上层进行相应的界面等相关内容的更新的，接下来我们对这部分的内容进行一下梳理，作为应用开发工程<br>师，这部分的内容应该是非常频繁的被用到的，那么我们就从onCallAdded()开始继续跟踪了。由于距离之前分析的代码部分已经过去很远了，为了方便阅读，我们将<code>addCall()</code>函数再贴一遍，如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// packages/services/Telecomm --&gt; CallsManager.java</span></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * Adds the specified call to the main list of live calls.</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@param</span> call The call to add.</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">addCall</span><span class="params">(Call call)</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    call.addListener(<span class="keyword">this</span>);</span><br><span class="line">    <span class="comment">// 将新建的call对象加入到mCall set中</span></span><br><span class="line">    mCalls.add(call);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// ...省略部分代码...</span></span><br><span class="line">    <span class="keyword">for</span> (CallsManagerListener listener : mListeners) &#123;</span><br><span class="line">        <span class="comment">// 此处会逐个触发已经注册的listener的onCallAdded回调，对于我们来说最重要的即</span></span><br><span class="line">        <span class="comment">// 为InCallController的onCallAdded回调，这个回调是关联底层与上层的关键回调</span></span><br><span class="line">        listener.onCallAdded(call);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// ...省略部分代码...</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>&emsp;可以看到，在addCall()的时候实际上是会遍历当前所有已添加的<code>CallsManagerListener</code>监听器，调用其实现的<code>onCallAdded()&#39;函数来进行响应的操作，都有哪些</code>listener<code>加入到了</code>mListeners<code>中？又是在哪加入的呢？实际上，是在</code>CallsManager.java`类的构造函数中加入的，函数定义如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="title">CallsManager</span><span class="params">(</span></span></span><br><span class="line"><span class="function"><span class="params">        Context context,</span></span></span><br><span class="line"><span class="function"><span class="params">        // ...省略一万个参数...</span></span></span><br><span class="line"><span class="function"><span class="params">        InCallControllerFactory inCallControllerFactory)</span> </span>&#123;</span><br><span class="line">    <span class="comment">// ...省略无关代码...</span></span><br><span class="line">    mListeners.add(mInCallWakeLockController);</span><br><span class="line">    mListeners.add(statusBarNotifier);</span><br><span class="line">    mListeners.add(mCallLogManager);</span><br><span class="line">    mListeners.add(mPhoneStateBroadcaster);</span><br><span class="line">    mListeners.add(mInCallController);</span><br><span class="line">    mListeners.add(mCallAudioManager);</span><br><span class="line">    mListeners.add(mCallRecordingTonePlayer);</span><br><span class="line">    mListeners.add(missedCallNotifier);</span><br><span class="line">    mListeners.add(mHeadsetMediaButton);</span><br><span class="line">    mListeners.add(mProximitySensorManager);</span><br><span class="line">    <span class="comment">/// M: Vibrate when call state changes to active.</span></span><br><span class="line">    mListeners.add(<span class="keyword">new</span> CallConnectedVibrator(mContext));</span><br><span class="line">    <span class="comment">// ...省略无关代码...</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>&emsp;这个构造函数是在<code>TelecomSystem.java</code>类的构造函数中被调用的，而<code>TelecomSystem.java</code>类的构造函数又是在<code>TelecomService.java</code>的<code>initializeTelecomSystem()</code>函数中被调用的，<code>initializeTelecomSystem()</code>函数又是在<code>TelecomService</code>进行服务绑定时被调用的，<code>TelecomService</code>服务绑定是在开机时由<code>SystemServer</code>启动<code>TelecomLoaderService</code>而后回调<code>onBootPhase()</code>函数进行绑定的，因此，这些监听器在相当早的时候就已经被加入了，在这些监听器中与上层关系最为密切的就是<code>mInCallController</code>这个监听器了，上层界面的唤起及显示与其直接相关，我们来看看它的`onCallAdded()’函数实现是怎样的</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// packages/services/Telecomm --&gt; InCallController.java</span></span><br><span class="line"><span class="meta">@Override</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onCallAdded</span><span class="params">(Call call)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (!isBoundAndConnectedToServices()) &#123;</span><br><span class="line">        Log.i(<span class="keyword">this</span>, <span class="string">"onCallAdded: %s; not bound or connected."</span>, call);</span><br><span class="line">        <span class="comment">// We are not bound, or we're not connected.</span></span><br><span class="line">        bindToServices(call);</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="comment">// ...省略非核心代码...</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>&emsp;在启动拨号界面流程上面我们自研拨号应用实际上是做过优化的，我们会在应用启动时就绑定服务，在拨号之初就会调用<code>bringToForeground()</code>将<code>InCall</code>界面启动起来并将所有当前已知信息加载出来，然后<br>等待<code>CallState</code>改变时的界面状态等一系列更新，这样一来就可以快速的启动界面并在状态改变的更新时保证界面信息准确且与底层提供的信息完全一致。在这里我们就不在描述我们自研的启动流程了，来看看从底层一路更新到上层的原生流程是怎么走的。原生流程中，首次调用<code>onCallAdded()</code>函数时服务尚未绑定，因此会调用<code>bindToServices()</code>函数，定义如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// packages/services/Telecomm --&gt; InCallController.java</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">bindToServices</span><span class="params">(Call call)</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">        <span class="comment">// Actually try binding to the UI InCallService.  If the response</span></span><br><span class="line">        <span class="keyword">if</span> (mInCallServiceConnection.connect(call) ==</span><br><span class="line">                InCallServiceConnection.CONNECTION_SUCCEEDED) &#123;</span><br><span class="line">            <span class="comment">// ...省略非核心代码...</span></span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="comment">// ...省略非核心代码...</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<p>&emsp;之后会调用<code>connect()</code>函数进行连接，此时的<code>mInCallServiceConnection</code>为<code>CarSwappingInCallServiceConnection</code>类型连接，经判断当前处于非<code>carMode</code>则会转为<code>EmergencyInCallServiceConnection</code>类型连接，最终会调用到<code>InCallServiceBindingConnection</code>的<code>connect</code>方法，定义如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// packages/services/Telecomm --&gt; InCallController.java --&gt; InCallServiceBindingConnection内部类</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">connect</span><span class="params">(Call call)</span> </span>&#123;</span><br><span class="line">    <span class="comment">// ...省略其他处理代码...</span></span><br><span class="line">    Intent intent = <span class="keyword">new</span> Intent(InCallService.SERVICE_INTERFACE);</span><br><span class="line">    intent.setComponent(mInCallServiceInfo.getComponentName());</span><br><span class="line">    <span class="keyword">if</span> (call != <span class="keyword">null</span> &amp;&amp; !call.isIncoming() &amp;&amp; !call.isExternalCall())&#123;</span><br><span class="line">        intent.putExtra(TelecomManager.EXTRA_OUTGOING_CALL_EXTRAS,</span><br><span class="line">                call.getIntentExtras());</span><br><span class="line">        intent.putExtra(TelecomManager.EXTRA_PHONE_ACCOUNT_HANDLE,</span><br><span class="line">                call.getTargetPhoneAccount());</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (!mContext.bindServiceAsUser(intent, mServiceConnection,</span><br><span class="line">                Context.BIND_AUTO_CREATE | Context.BIND_FOREGROUND_SERVICE,</span><br><span class="line">                UserHandle.CURRENT)) &#123;</span><br><span class="line">        Log.w(<span class="keyword">this</span>, <span class="string">"Failed to connect."</span>);</span><br><span class="line">        mIsConnected = <span class="keyword">false</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// ...省略非核心代码...</span></span><br><span class="line">    <span class="keyword">return</span> mIsConnected ? CONNECTION_SUCCEEDED : CONNECTION_FAILED;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>&emsp;这里就会走到<code>bindServiceAsUser()</code>中，其实就是在绑定<code>InCallService</code>，其实现在<code>InCallServiceImpl.java</code>类中，调用<code>bindServiceAsUser()</code>时会回调到<code>InCallServiceImpl.java</code>类中的<code>onBind()</code>函数，其定义如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// TPDialtacts库 --&gt; InCallServiceImpl.java</span></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> IBinder <span class="title">onBind</span><span class="params">(Intent intent)</span> </span>&#123;</span><br><span class="line">        <span class="comment">// ...省略非核心代码...</span></span><br><span class="line">        InCallPresenter.getInstance().maybeStartRevealAnimation(intent,context);</span><br><span class="line"></span><br><span class="line">        <span class="comment">// ...省略InCallPresenter相关内容的建立代码...</span></span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">super</span>.onBind(intent);</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<p>&emsp;启动拨号界面的核心函数就是<code>maybeStartRevealAnimation()</code>，定义如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// TPDialtacts库 --&gt; InCallPresenter.java</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">maybeStartRevealAnimation</span><span class="params">(Intent intent,Context context)</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// ...省略非核心处理代码...</span></span><br><span class="line">    <span class="keyword">final</span> Intent incallIntent = getInCallIntent(<span class="keyword">false</span>, <span class="keyword">true</span>);</span><br><span class="line">    incallIntent.putExtra(TouchPointManager.TOUCH_POINT, touchPoint);</span><br><span class="line">    mContext.startActivity(incallIntent);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">public</span> Intent <span class="title">getInCallIntent</span><span class="params">(<span class="keyword">boolean</span> showDialpad, <span class="keyword">boolean</span> newOutgoingCall)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">final</span> Intent intent = <span class="keyword">new</span> Intent(Intent.ACTION_MAIN, <span class="keyword">null</span>);</span><br><span class="line">    intent.setFlags(Intent.FLAG_ACTIVITY_NO_USER_ACTION | Intent.FLAG_ACTIVITY_NEW_TASK);</span><br><span class="line"></span><br><span class="line">    intent.setClass(mContext, InCallActivity.class);</span><br><span class="line">    <span class="keyword">if</span> (showDialpad) &#123;</span><br><span class="line">        intent.putExtra(InCallActivity.SHOW_DIALPAD_EXTRA, <span class="keyword">true</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    intent.putExtra(InCallActivity.NEW_OUTGOING_CALL_EXTRA, newOutgoingCall);</span><br><span class="line">    <span class="keyword">return</span> intent;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>&emsp;如上所示，会封装出启动<code>InCallActivity</code>的<code>Intent</code>，最终去启动通话界面，这样就走通了整个上下层电话播出及界面启动，至此，整个去电流程跟踪结束。最后我们附上去点流程的时序图如下：<br><img src="/2019/04/11/去电流程跟踪/去电流程时序图.png" alt="去电流程时序图"></p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/04/10/AppWidget开发指南/" rel="next" title="AppWidget开发指南">
+                <i class="fa fa-chevron-left"></i> AppWidget开发指南
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="/images/小叮当.png" alt="LuckyHappyBear">
+            
+              <p class="site-author-name" itemprop="name">LuckyHappyBear</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">3</span>
+                  <span class="site-state-item-name">posts</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">2</span>
+                  <span class="site-state-item-name">categories</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">2</span>
+                  <span class="site-state-item-name">tags</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#去电流程跟踪记录"><span class="nav-number">1.</span> <span class="nav-text">去电流程跟踪记录</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#概要"><span class="nav-number">1.1.</span> <span class="nav-text">概要</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#去电流程"><span class="nav-number">1.2.</span> <span class="nav-text">去电流程</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">LuckyHappyBear</span>
+
+  
+</div>
+
+
+  <div class="powered-by">Powered by <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a></div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">Theme &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Pisces</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/canvas-nest/canvas-nest.min.js"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
