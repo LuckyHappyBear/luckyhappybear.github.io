@@ -1,0 +1,796 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-CN">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="动画,">
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="属性动画核心原理1. 属性动画简介&amp;emsp;&amp;emsp;属性动画(Property Animation)系统是一个健壮的动画框架系统，它可以满足我们大部分的动画需求。不管动画对象是否已经绘制到屏幕上，你都可以在动画执行过程中改变它任意的属性值。一个属性动画会在一段特定长度的时间内改变一个属性值。你可以通过以下几步定义一个动画：指定你要执行动画的属性，比如动画对象(View)在屏幕上的位置，指定执">
+<meta name="keywords" content="动画">
+<meta property="og:type" content="article">
+<meta property="og:title" content="属性动画核心原理">
+<meta property="og:url" content="http://luckyhappybear.github.io/2019/04/15/属性动画核心原理/index.html">
+<meta property="og:site_name" content="大雄的博客">
+<meta property="og:description" content="属性动画核心原理1. 属性动画简介&amp;emsp;&amp;emsp;属性动画(Property Animation)系统是一个健壮的动画框架系统，它可以满足我们大部分的动画需求。不管动画对象是否已经绘制到屏幕上，你都可以在动画执行过程中改变它任意的属性值。一个属性动画会在一段特定长度的时间内改变一个属性值。你可以通过以下几步定义一个动画：指定你要执行动画的属性，比如动画对象(View)在屏幕上的位置，指定执">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="http://luckyhappybear.github.io/2019/04/15/属性动画核心原理/线性动画示例.png">
+<meta property="og:image" content="http://luckyhappybear.github.io/2019/04/15/属性动画核心原理/加速动画示例.png">
+<meta property="og:image" content="http://luckyhappybear.github.io/2019/04/15/属性动画核心原理/动画计算流程.png">
+<meta property="og:image" content="http://luckyhappybear.github.io/2019/04/15/属性动画核心原理/属性动画执行流程图.png">
+<meta property="og:image" content="http://luckyhappybear.github.io/2019/04/15/属性动画核心原理/属性动画start(">
+<meta property="og:image" content="http://luckyhappybear.github.io/2019/04/15/属性动画核心原理/主要数据结构类图.png">
+<meta property="og:image" content="http://luckyhappybear.github.io/2019/04/15/属性动画核心原理/ofInt(">
+<meta property="og:updated_time" content="2019-04-15T15:18:35.060Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="属性动画核心原理">
+<meta name="twitter:description" content="属性动画核心原理1. 属性动画简介&amp;emsp;&amp;emsp;属性动画(Property Animation)系统是一个健壮的动画框架系统，它可以满足我们大部分的动画需求。不管动画对象是否已经绘制到屏幕上，你都可以在动画执行过程中改变它任意的属性值。一个属性动画会在一段特定长度的时间内改变一个属性值。你可以通过以下几步定义一个动画：指定你要执行动画的属性，比如动画对象(View)在屏幕上的位置，指定执">
+<meta name="twitter:image" content="http://luckyhappybear.github.io/2019/04/15/属性动画核心原理/线性动画示例.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: 'Author'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://luckyhappybear.github.io/2019/04/15/属性动画核心原理/">
+
+
+
+
+
+  <title>属性动画核心原理 | 大雄的博客</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope="" itemtype="http://schema.org/WebPage" lang="zh-CN">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope="" itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">大雄的博客</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">持之以恒</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            Home
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br>
+            
+            About
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            Tags
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            Categories
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            Archives
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://luckyhappybear.github.io/2019/04/15/属性动画核心原理/">
+
+    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="LuckyHappyBear">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/小叮当.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="大雄的博客">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">属性动画核心原理</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2019-04-15T22:40:30+08:00">
+                2019-04-15
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing">
+                  <a href="/categories/Android/" itemprop="url" rel="index">
+                    <span itemprop="name">Android</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="属性动画核心原理"><a href="#属性动画核心原理" class="headerlink" title="属性动画核心原理"></a>属性动画核心原理</h1><h2 id="1-属性动画简介"><a href="#1-属性动画简介" class="headerlink" title="1. 属性动画简介"></a>1. 属性动画简介</h2><p>&emsp;&emsp;属性动画(Property Animation)系统是一个健壮的动画框架系统，它可以满足我们大部分的动画需求。不管动画对象是否已经绘制到屏幕上，你都可以在动画执行过程中改变它任意的属性值。一个属性动画会在一段特定长度的时间内改变一个属性值。你可以通过以下几步定义一个动画：指定你要执行动画的属性，比如动画对象(View)在屏幕上的位置，指定执行时长，指定你希望的属性的变化范围，比如从屏幕左边平移至右边等。<br>&emsp;&emsp;在属性动画框架系统中我们可以定义如下动画属性：</p>
+<ol>
+<li>Duration：动画持续时长</li>
+<li>Time interpolation：时间插值器，这个属性代表了指定时间内的变化率，比如线性插值器，是一个线性变化，加速插值器则是一个加速变化</li>
+<li>Repeat count and behavior：我们可以指定动画的重复次数，从仅执行一遍到无穷循环均可指定，还可以指定动画重复时是从头再来还是反向进行</li>
+<li>Animator sets：我们在进行动画时不仅仅只能执行一个动画，而是可以进行一组动画，你可以指定他们的执行顺序，或者令其同时进行</li>
+<li>Frame refresh delay：帧刷新延迟，对于你的动画，多久刷新一次帧；默认为10ms，但最终依赖系统的当前状态</li>
+</ol>
+<h2 id="2-属性动画工作原理简介"><a href="#2-属性动画工作原理简介" class="headerlink" title="2. 属性动画工作原理简介"></a>2. 属性动画工作原理简介</h2><p>&emsp;&emsp;我们先来看看SDK中给出的两个示例图，其中定义了一个View分别使用线性插值器及先加速后减速的插值器来进行一个平移的动画，动画执行的duration均为40ms，位移总长度为40pix，图中x代表其在屏幕上的水平位置，t则代表当前已经执行的时间长度。</p>
+<p><img src="/2019/04/15/属性动画核心原理/线性动画示例.png" alt="线性动画示例"></p>
+<p>&emsp;&emsp;如上如所示为一个线性动画，显而易见，1pix / s的速度稳步前进，40s的时长刚好位移40pix，接下来再来看看加速动画的示意图：</p>
+<p><img src="/2019/04/15/属性动画核心原理/加速动画示例.png" alt="线性动画示例"></p>
+<p>&emsp;&emsp;如上所示，这并不是一个匀速动画，我们可以明显的看出他的速度是先增后减的，Android内部究竟是如何运行来完成这个平滑的移动过程的呢？<br>&emsp;&emsp;这里我们就要来说说上面介绍的那些属性是如何一起合作完成的这个移动的过程，首先我们有了这个duration，这个一般是用户提供的，是一个动画总时长，然后我们有一个刷新延迟，即上面提到的Frame refresh delay，这个是由系统来定的，在这个例子中是将其强制设置为10ms的，之后最重要的就是两个插值器，这是决定这两个动画表现不一致的根本因素，我们来看看这两个插值器的定义，首先是线性插值器，他的类定义如下所示：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">* An interpolator where the rate of change is constant</span><br><span class="line"> */</span><br><span class="line"><span class="meta">@HasNativeInterpolator</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">LinearInterpolator</span> <span class="keyword">extends</span> <span class="title">BaseInterpolator</span> <span class="keyword">implements</span> <span class="title">NativeInterpolatorFactory</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">LinearInterpolator</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">LinearInterpolator</span><span class="params">(Context context, AttributeSet attrs)</span> </span>&#123;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">float</span> <span class="title">getInterpolation</span><span class="params">(<span class="keyword">float</span> input)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> input;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/** <span class="doctag">@hide</span> */</span></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">long</span> <span class="title">createNativeInterpolator</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> NativeInterpolatorFactoryHelper.createLinearInterpolator();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>&emsp;&emsp;其次是先加速后减速插值器，其类定义如下所示：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * An interpolator where the rate of change starts and ends slowly but</span></span><br><span class="line"><span class="comment"> * accelerates through the middle.</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="meta">@HasNativeInterpolator</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">AccelerateDecelerateInterpolator</span> <span class="keyword">extends</span> <span class="title">BaseInterpolator</span></span></span><br><span class="line"><span class="class">        <span class="keyword">implements</span> <span class="title">NativeInterpolatorFactory</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">AccelerateDecelerateInterpolator</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@SuppressWarnings</span>(&#123;<span class="string">"UnusedDeclaration"</span>&#125;)</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">AccelerateDecelerateInterpolator</span><span class="params">(Context context, AttributeSet attrs)</span> </span>&#123;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">float</span> <span class="title">getInterpolation</span><span class="params">(<span class="keyword">float</span> input)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> (<span class="keyword">float</span>)(Math.cos((input + <span class="number">1</span>) * Math.PI) / <span class="number">2.0f</span>) + <span class="number">0.5f</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/** <span class="doctag">@hide</span> */</span></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">long</span> <span class="title">createNativeInterpolator</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> NativeInterpolatorFactoryHelper.createAccelerateDecelerateInterpolator();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>&emsp;&emsp;如上所示，其中最最主要的就是getInterpolator(float input)这个函数，这个函数我们可以说是定义了每个刷新时间点的路程比，（我们以单次不重复的最简单动画举例）这个函数传入的参数在正常情况下实际上就是目前已经执行的时间与总时间的比，然后对这个比率进行计算后再乘以总距离就是这个view在这次刷新时所在的位置，计算公式可以视为：总距离<em> getInterpolator(已执行时间/总时间)，我们以10ms时为例，对于线性动画，我们在10ms时的距离为：40 </em> （10 / 40） = 10；而对于先加速后减速动画，我们在10ms时的举例就为：40 <em> （(Math.cos(((10/40) + 1) </em> Math.PI) / 2.0f) + 0.5f）≈ 6<br>&emsp;&emsp;综上我们大致明白了属性动画究竟是怎样进行运转的，当然，上面的分析仅仅是非常表面的分析，属性动画能够如此强大必然有一套复杂的机制在背后支撑，下面的部分我们就来分析一下属性动画的核心原理。</p>
+<h2 id="3-属性动画核心原理"><a href="#3-属性动画核心原理" class="headerlink" title="3. 属性动画核心原理"></a>3. 属性动画核心原理</h2><h3 id="3-1-流程分析"><a href="#3-1-流程分析" class="headerlink" title="3.1 流程分析"></a>3.1 流程分析</h3><p>&emsp;&emsp;我们继续拿SDK中的属性动画的核心组件图并结合源码来分析属性动画各个组件究竟是如何携手合作，提供给我们丰富的视觉体验的，属性动画核心组件及计算流程如下图所示：</p>
+<p><img src="/2019/04/15/属性动画核心原理/动画计算流程.png" alt="动画计算流程"></p>
+<p>&emsp;&emsp;如上图所示，为SDK中给出的动画计算流程图，主要架构围绕ValueAnimatior来进行，这个对象会实时跟踪我们的动画状态，并且保存着我们动画的各种参数，包括插值器，duration，开始时间等等属性，然后存在一个插值器和估值器，他们会根据流逝时间与duration的值做一系列的计算，然后得到属性值，再将其设置给对应的view，我们对这个流程进行一个总结，并将其用如下流程图表示出来，据此我们就能够大致了解属性动画的执行更新流程了。</p>
+<p><img src="/2019/04/15/属性动画核心原理/属性动画执行流程图.png" alt="属性动画执行流程图"></p>
+<h3 id="3-2-源码解析"><a href="#3-2-源码解析" class="headerlink" title="3.2 源码解析"></a>3.2 源码解析</h3><p>&emsp;&emsp;我们在使用ValueAnimator时最简单的调用方法如下所示：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">ValueAnimator valueAnimator = ValueAnimator.ofInt(<span class="number">0</span>, <span class="number">200</span>, <span class="number">100</span>);</span><br><span class="line">valueAnimator.setDuration(<span class="number">3000</span>);</span><br><span class="line">valueAnimator.addUpdateListener(<span class="keyword">new</span> ValueAnimator.AnimatorUpdateListener() &#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onAnimationUpdate</span><span class="params">(ValueAnimator animation)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">int</span> currentValue = (Integer) animation.getAnimatedValue();</span><br><span class="line">                setX(currentValue);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;);</span><br><span class="line">valueAnimator.start();</span><br></pre></td></tr></table></figure>
+<p>&emsp;&emsp;其中设置duration使用setDuration()进行，这个函数十分简单，看一眼基本就能确定他的作用就是将ValueAnimator的一个duration成语变量进行了赋值，valueAnimator.setDuration(3000)与ValueAnimator.ofInt(0, 200, 100)共同设置后的作用是告诉系统，这个动画一旦被启动了，需要在3000ms的时间内将数值从0变化到200，之后再从200变化到100。启动动画使用的是start()函数，这个函数被调用后就说明动画要开始启动了。其中还有如下代码：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">ValueAnimator.AnimatorUpdateListener() &#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onAnimationUpdate</span><span class="params">(ValueAnimator animation)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">int</span> currentValue = (Integer) animation.getAnimatedValue();</span><br><span class="line">        setX(currentValue);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+<p>&emsp;&emsp;这部分的代码使用来定义动画更新时进行的操作的，得到当前的值并进行一定的操作我们的属性动画基本都是如此使用的。<br>&emsp;&emsp;这个流程中的setDuration()函数是十分好理解的不需要进行分析，AnimatorUpdateListener的逻辑也较为清晰，但是究竟是如何触发的在之后的源码分析中会带出，最最主要的就是剩下的两个函数，即ValueAnimator.ofInt(0, 200, 100);与start();函数</p>
+<h4 id="3-2-1-ValueAnimator的start-函数"><a href="#3-2-1-ValueAnimator的start-函数" class="headerlink" title="3.2.1 ValueAnimator的start()函数"></a>3.2.1 ValueAnimator的start()函数</h4><p>&emsp;&emsp;我们先用一张时序图来说明valueAnimator调用start()函数后是如何运行的，是如何保证动起来的，调用start的时序图如下所示：</p>
+<p><img src="/2019/04/15/属性动画核心原理/属性动画start(" alt="属性动画start()函数时序图">函数时序图.png)</p>
+<p>&emsp;&emsp;如上所示这个流程由一系列的回掉组成，调用start之后，整个动画的流程就由系统的VSYNC来触发，Choreographer是对VSYNC做了监听的，当有VSYNC消息的时候会执行onVsync，最终走到Choreographer的doFrame，之后就按照上面的流程一一执行，到最后我们看到了整个动画的核心就在这个caculate()函数上，计算完成后，会调用所有对这个animation注册了AnimatorUpdateListener的onAnimationUpdate()函数，这样一来我们的动画就可以拿到更新过的值了，接下来我们就需要看看这个caculate()函数了，这个函数实际上是更新属性值的位置，这个流程是怎样的呢，这个caculate()实际上是由剩下的一个函数来触发的流程，这个流程也相当复杂，我们先记住这个caculate()函数，接下来我们分析下一个重点函数。</p>
+<h4 id="3-2-2-ValueAnimator-ofInt-函数"><a href="#3-2-2-ValueAnimator-ofInt-函数" class="headerlink" title="3.2.2 ValueAnimator.ofInt()函数"></a>3.2.2 ValueAnimator.ofInt()函数</h4><h5 id="3-2-2-1-主要数据结构"><a href="#3-2-2-1-主要数据结构" class="headerlink" title="3.2.2.1 主要数据结构"></a>3.2.2.1 主要数据结构</h5><p>&emsp;&emsp;在了解这个函数之前我们得先简单的知道下面的类图关系，如下图所示：</p>
+<p><img src="/2019/04/15/属性动画核心原理/主要数据结构类图.png" alt="属性动画start()函数时序图"></p>
+<p>&emsp;&emsp;这个类图虽然看起来较为庞大，但是大多为不同类型的继承导致看起来有点复杂，实际上我们分析的是ofInt()函数，因此我们只需要关心Int开头的内容即可，实际上PropertyValuesHolder是ValueAnimator的成员变量，而mKeyframes又是PropertyValuesHolder的成员变量，我们大致知道这两个结构后直接以ofInt()函数为切入点进行分析。</p>
+<h5 id="3-2-2-2-ofInt-函数"><a href="#3-2-2-2-ofInt-函数" class="headerlink" title="3.2.2.2 ofInt()函数"></a>3.2.2.2 ofInt()函数</h5><p>&emsp;&emsp;我们还是先用一张时序图来进行分析，时序图如下：</p>
+<p><img src="/2019/04/15/属性动画核心原理/ofInt(" alt="ofInt()函数时序">函数时序.png)</p>
+<p>&emsp;&emsp;如上图所示，经过这个流程后我们将所有的数据结构都填上了相应的值，比如之前的ofInt(0, 200, 100)的值转化到这个keyFrameSet中就转化为了(0, 0), (1/2, 200)，(1, 100)，这个值对会在之后被用来进行相应的计算。<br>&emsp;&emsp;现在我们分析完了ofInt流程，然后我们回到之前的calculate函数中去，看看caculate的调用流程，如下为calculate()的函数定义：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">calculateValue</span><span class="params">(<span class="keyword">float</span> fraction)</span> </span>&#123;</span><br><span class="line">	Object value = mKeyframes.getValue(fraction);</span><br><span class="line">	mAnimatedValue = mConverter == <span class="keyword">null</span> ? value : mConverter.convert(value);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>&emsp;&emsp;如上所示，我们看到value值是调用了getValue()来获取的，我们接下来看getValue的定义，根据上面的类图我们知道这是一个接口，定义实际上是由各个子类来完成的，由于我们调用的是ofInt()，因此我们用的就是IntKeyFrameSet中来定义的，继续看代码如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Override</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> Object <span class="title">getValue</span><span class="params">(<span class="keyword">float</span> fraction)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> getIntValue(fraction);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>&emsp;&emsp;继续跟踪，getIntValue(float)定义如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">getIntValue</span><span class="params">(<span class="keyword">float</span> fraction)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (mNumKeyframes == <span class="number">2</span>) &#123;</span><br><span class="line">        <span class="keyword">if</span> (firstTime) &#123;</span><br><span class="line">            firstTime = <span class="keyword">false</span>;</span><br><span class="line">            firstValue = ((IntKeyframe) mKeyframes.get(<span class="number">0</span>)).getIntValue();</span><br><span class="line">            lastValue = ((IntKeyframe) mKeyframes.get(<span class="number">1</span>)).getIntValue();</span><br><span class="line">            deltaValue = lastValue - firstValue;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span> (mInterpolator != <span class="keyword">null</span>) &#123;</span><br><span class="line">            fraction = mInterpolator.getInterpolation(fraction);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span> (mEvaluator == <span class="keyword">null</span>) &#123;</span><br><span class="line">            <span class="keyword">return</span> firstValue + (<span class="keyword">int</span>)(fraction * deltaValue);</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="keyword">return</span> ((Number)mEvaluator.evaluate(fraction, firstValue, lastValue)).intValue();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// ...省略部分代码</span></span><br><span class="line">    IntKeyframe prevKeyframe = (IntKeyframe) mKeyframes.get(<span class="number">0</span>);</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">1</span>; i &lt; mNumKeyframes; ++i) &#123;</span><br><span class="line">        IntKeyframe nextKeyframe = (IntKeyframe) mKeyframes.get(i);</span><br><span class="line">        <span class="keyword">if</span> (fraction &lt; nextKeyframe.getFraction()) &#123;</span><br><span class="line">            <span class="keyword">final</span> TimeInterpolator interpolator = nextKeyframe.getInterpolator();</span><br><span class="line">            <span class="keyword">float</span> intervalFraction = (fraction - prevKeyframe.getFraction()) /</span><br><span class="line">                (nextKeyframe.getFraction() - prevKeyframe.getFraction());</span><br><span class="line">            <span class="keyword">int</span> prevValue = prevKeyframe.getIntValue();</span><br><span class="line">            <span class="keyword">int</span> nextValue = nextKeyframe.getIntValue();</span><br><span class="line">            <span class="comment">// Apply interpolator on the proportional duration.</span></span><br><span class="line">            <span class="keyword">if</span> (interpolator != <span class="keyword">null</span>) &#123;</span><br><span class="line">                intervalFraction = interpolator.getInterpolation(intervalFraction);</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">return</span> mEvaluator == <span class="keyword">null</span> ?</span><br><span class="line">                    prevValue + (<span class="keyword">int</span>)(intervalFraction * (nextValue - prevValue)) :</span><br><span class="line">                    ((Number)mEvaluator.evaluate(intervalFraction, prevValue, nextValue)).</span><br><span class="line">                            intValue();</span><br><span class="line">        &#125;</span><br><span class="line">        prevKeyframe = nextKeyframe;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// shouldn't get here</span></span><br><span class="line">    <span class="keyword">return</span> ((Number)mKeyframes.get(mNumKeyframes - <span class="number">1</span>).getValue()).intValue();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>&emsp;&emsp;根据mKeyFrameSet及估值器，我们得到了某个时间点的值，然后返回到之前的逻辑中将此计算所得的值返回给ValueAnimator的成员变量mAnimatedValue，之后我们获取值就是根据这个来进行返回的。<br>&emsp;&emsp;以上就是本次整理的属性动画核心原理了，特此记录。</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/动画/" rel="tag"># 动画</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/04/11/标题栏字体自适应缩放/" rel="next" title="标题栏字体自适应缩放">
+                <i class="fa fa-chevron-left"></i> 标题栏字体自适应缩放
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="/images/小叮当.png" alt="LuckyHappyBear">
+            
+              <p class="site-author-name" itemprop="name">LuckyHappyBear</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">8</span>
+                  <span class="site-state-item-name">posts</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">2</span>
+                  <span class="site-state-item-name">categories</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">8</span>
+                  <span class="site-state-item-name">tags</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#属性动画核心原理"><span class="nav-number">1.</span> <span class="nav-text">属性动画核心原理</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-属性动画简介"><span class="nav-number">1.1.</span> <span class="nav-text">1. 属性动画简介</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-属性动画工作原理简介"><span class="nav-number">1.2.</span> <span class="nav-text">2. 属性动画工作原理简介</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-属性动画核心原理"><span class="nav-number">1.3.</span> <span class="nav-text">3. 属性动画核心原理</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#3-1-流程分析"><span class="nav-number">1.3.1.</span> <span class="nav-text">3.1 流程分析</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-2-源码解析"><span class="nav-number">1.3.2.</span> <span class="nav-text">3.2 源码解析</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#3-2-1-ValueAnimator的start-函数"><span class="nav-number">1.3.2.1.</span> <span class="nav-text">3.2.1 ValueAnimator的start()函数</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-2-2-ValueAnimator-ofInt-函数"><span class="nav-number">1.3.2.2.</span> <span class="nav-text">3.2.2 ValueAnimator.ofInt()函数</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#3-2-2-1-主要数据结构"><span class="nav-number">1.3.2.2.1.</span> <span class="nav-text">3.2.2.1 主要数据结构</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#3-2-2-2-ofInt-函数"><span class="nav-number">1.3.2.2.2.</span> <span class="nav-text">3.2.2.2 ofInt()函数</span></a></li></ol></li></ol></li></ol></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">LuckyHappyBear</span>
+
+  
+</div>
+
+
+  <div class="powered-by">Powered by <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a></div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">Theme &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Pisces</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/canvas-nest/canvas-nest.min.js"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
