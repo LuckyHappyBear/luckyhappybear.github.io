@@ -91,10 +91,10 @@
 <meta property="og:image" content="http://luckyhappybear.github.io/2019/04/15/属性动画核心原理/加速动画示例.png">
 <meta property="og:image" content="http://luckyhappybear.github.io/2019/04/15/属性动画核心原理/动画计算流程.png">
 <meta property="og:image" content="http://luckyhappybear.github.io/2019/04/15/属性动画核心原理/属性动画执行流程图.png">
-<meta property="og:image" content="http://luckyhappybear.github.io/2019/04/15/属性动画核心原理/属性动画start(">
+<meta property="og:image" content="http://luckyhappybear.github.io/2019/04/15/属性动画核心原理/start函数时序图.png">
 <meta property="og:image" content="http://luckyhappybear.github.io/2019/04/15/属性动画核心原理/主要数据结构类图.png">
-<meta property="og:image" content="http://luckyhappybear.github.io/2019/04/15/属性动画核心原理/ofInt(">
-<meta property="og:updated_time" content="2019-04-16T12:20:24.278Z">
+<meta property="og:image" content="http://luckyhappybear.github.io/2019/04/15/属性动画核心原理/ofInt函数时序.png">
+<meta property="og:updated_time" content="2019-04-16T12:24:52.759Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="属性动画核心原理">
 <meta name="twitter:description" content="属性动画核心原理1. 属性动画简介&amp;emsp;&amp;emsp;属性动画(Property Animation)系统是一个健壮的动画框架系统，它可以满足我们大部分的动画需求。不管动画对象是否已经绘制到屏幕上，你都可以在动画执行过程中改变它任意的属性值。一个属性动画会在一段特定长度的时间内改变一个属性值。你可以通过以下几步定义一个动画：指定你要执行动画的属性，比如动画对象(View)在屏幕上的位置，指定执">
@@ -387,13 +387,13 @@
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">ValueAnimator.AnimatorUpdateListener() &#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onAnimationUpdate</span><span class="params">(ValueAnimator animation)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">int</span> currentValue = (Integer) animation.getAnimatedValue();</span><br><span class="line">        setX(currentValue);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
 <p>&emsp;&emsp;这部分的代码使用来定义动画更新时进行的操作的，得到当前的值并进行一定的操作我们的属性动画基本都是如此使用的。<br>&emsp;&emsp;这个流程中的setDuration()函数是十分好理解的不需要进行分析，AnimatorUpdateListener的逻辑也较为清晰，但是究竟是如何触发的在之后的源码分析中会带出，最最主要的就是剩下的两个函数，即ValueAnimator.ofInt(0, 200, 100);与start();函数</p>
 <h4 id="3-2-1-ValueAnimator的start-函数"><a href="#3-2-1-ValueAnimator的start-函数" class="headerlink" title="3.2.1 ValueAnimator的start()函数"></a>3.2.1 ValueAnimator的start()函数</h4><p>&emsp;&emsp;我们先用一张时序图来说明valueAnimator调用start()函数后是如何运行的，是如何保证动起来的，调用start的时序图如下所示：</p>
-<p><img src="/2019/04/15/属性动画核心原理/属性动画start(" alt="属性动画start()函数时序图">函数时序图.png)</p>
+<p><img src="/2019/04/15/属性动画核心原理/start函数时序图.png" alt="属性动画start()函数时序图"></p>
 <p>&emsp;&emsp;如上所示这个流程由一系列的回掉组成，调用start之后，整个动画的流程就由系统的VSYNC来触发，Choreographer是对VSYNC做了监听的，当有VSYNC消息的时候会执行onVsync，最终走到Choreographer的doFrame，之后就按照上面的流程一一执行，到最后我们看到了整个动画的核心就在这个caculate()函数上，计算完成后，会调用所有对这个animation注册了AnimatorUpdateListener的onAnimationUpdate()函数，这样一来我们的动画就可以拿到更新过的值了，接下来我们就需要看看这个caculate()函数了，这个函数实际上是更新属性值的位置，这个流程是怎样的呢，这个caculate()实际上是由剩下的一个函数来触发的流程，这个流程也相当复杂，我们先记住这个caculate()函数，接下来我们分析下一个重点函数。</p>
 <h4 id="3-2-2-ValueAnimator-ofInt-函数"><a href="#3-2-2-ValueAnimator-ofInt-函数" class="headerlink" title="3.2.2 ValueAnimator.ofInt()函数"></a>3.2.2 ValueAnimator.ofInt()函数</h4><h5 id="3-2-2-1-主要数据结构"><a href="#3-2-2-1-主要数据结构" class="headerlink" title="3.2.2.1 主要数据结构"></a>3.2.2.1 主要数据结构</h5><p>&emsp;&emsp;在了解这个函数之前我们得先简单的知道下面的类图关系，如下图所示：</p>
 <p><img src="/2019/04/15/属性动画核心原理/主要数据结构类图.png" alt="属性动画start()函数时序图"></p>
 <p>&emsp;&emsp;这个类图虽然看起来较为庞大，但是大多为不同类型的继承导致看起来有点复杂，实际上我们分析的是ofInt()函数，因此我们只需要关心Int开头的内容即可，实际上PropertyValuesHolder是ValueAnimator的成员变量，而mKeyframes又是PropertyValuesHolder的成员变量，我们大致知道这两个结构后直接以ofInt()函数为切入点进行分析。</p>
 <h5 id="3-2-2-2-ofInt-函数"><a href="#3-2-2-2-ofInt-函数" class="headerlink" title="3.2.2.2 ofInt()函数"></a>3.2.2.2 ofInt()函数</h5><p>&emsp;&emsp;我们还是先用一张时序图来进行分析，时序图如下：</p>
-<p><img src="/2019/04/15/属性动画核心原理/ofInt(" alt="ofInt()函数时序">函数时序.png)</p>
+<p><img src="/2019/04/15/属性动画核心原理/ofInt函数时序.png" alt="ofInt()函数时序"></p>
 <p>&emsp;&emsp;如上图所示，经过这个流程后我们将所有的数据结构都填上了相应的值，比如之前的ofInt(0, 200, 100)的值转化到这个keyFrameSet中就转化为了(0, 0), (1/2, 200)，(1, 100)，这个值对会在之后被用来进行相应的计算。<br>&emsp;&emsp;现在我们分析完了ofInt流程，然后我们回到之前的calculate函数中去，看看caculate的调用流程，如下为calculate()的函数定义：</p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">calculateValue</span><span class="params">(<span class="keyword">float</span> fraction)</span> </span>&#123;</span><br><span class="line">	Object value = mKeyframes.getValue(fraction);</span><br><span class="line">	mAnimatedValue = mConverter == <span class="keyword">null</span> ? value : mConverter.convert(value);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>&emsp;&emsp;如上所示，我们看到value值是调用了getValue()来获取的，我们接下来看getValue的定义，根据上面的类图我们知道这是一个接口，定义实际上是由各个子类来完成的，由于我们调用的是ofInt()，因此我们用的就是IntKeyFrameSet中来定义的，继续看代码如下：</p>
